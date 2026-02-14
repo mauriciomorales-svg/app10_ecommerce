@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #1a1a2e;
+  --accent: #d81b60;
+  --accent-hover: #ad1457;
+  --gold: #ff6090;
+  --surface: #ffffff;
+  --bg: #fff5f7;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+body {
+  color: #1a1a2e;
+  background: var(--bg);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-[#d81b60] text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg;
+  }
+  .btn-primary:hover {
+    @apply bg-[#ad1457] -translate-y-0.5;
+  }
+
+  .badge-category {
+    @apply inline-block px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full text-white;
+    background: linear-gradient(135deg, #d81b60, #ff6090);
+  }
+
+  .badge-stock {
+    @apply inline-block px-2 py-0.5 text-xs font-semibold rounded-full;
+  }
+
+  .glass {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .input-search {
+    @apply w-full px-5 py-4 text-gray-800 bg-white rounded-2xl border-0 outline-none text-lg;
+  }
+  .input-search::placeholder {
+    @apply text-gray-400;
+  }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+@keyframes floatHeart {
+  0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.7; }
+  50% { transform: translateY(-40px) rotate(15deg) scale(1.1); opacity: 0.4; }
+  100% { transform: translateY(-80px) rotate(-10deg) scale(0.8); opacity: 0; }
+}
+
+@keyframes pulse-heart {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.animate-float-heart {
+  animation: floatHeart 4s ease-in-out infinite;
+}
+
+.animate-pulse-heart {
+  animation: pulse-heart 1.5s ease-in-out infinite;
+}
