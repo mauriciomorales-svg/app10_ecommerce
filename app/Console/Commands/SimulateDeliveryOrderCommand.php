@@ -49,8 +49,10 @@ class SimulateDeliveryOrderCommand extends Command
         $venta = DB::transaction(function () use ($destLat, $destLng) {
             $product = Producto::query()->where('activo', true)->orderBy('idproducto')->first();
 
+            $tempNum = (int) Venta::query()->max('numero_venta') + 1;
+
             $venta = Venta::create([
-                'numero_venta' => null,
+                'numero_venta' => $tempNum,
                 'fecha' => now(),
                 'estado' => 'pagado',
                 'medio_pago' => 'simulacion',
