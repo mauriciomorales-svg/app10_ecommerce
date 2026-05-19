@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Venta;
 use App\Support\OrderTicketUrl;
+use App\Support\OrderTrackingUrl;
 
 class PickupFulfillmentService
 {
@@ -49,6 +50,9 @@ class PickupFulfillmentService
             'whatsapp' => config('packaging.whatsapp'),
             'ticket_url' => strtolower((string) $venta->estado) === 'pagado'
                 ? OrderTicketUrl::signed((int) $venta->idventa)
+                : null,
+            'tracking_url' => strtolower((string) $venta->estado) === 'pagado'
+                ? OrderTrackingUrl::signed((int) $venta->idventa)
                 : null,
             'fulfillment_type' => $venta->fulfillment_type ?? 'pickup',
             'delivery_amount' => (int) round((float) ($venta->delivery_amount ?? 0)),

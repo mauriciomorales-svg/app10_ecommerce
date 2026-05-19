@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Venta;
+use App\Support\CommerceMail;
+use App\Support\OrderTrackingUrl;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -36,6 +38,7 @@ class DeliveryMilestoneNotifier
 
         $order = $venta->numero_venta ?? $venta->idventa;
         $name = trim((string) ($venta->cliente_nombre ?? ''));
+        $track = OrderTrackingUrl::signed((int) $venta->idventa);
 
         $messages = match ($newStatus) {
             'accepted', 'taken' => [
@@ -43,7 +46,7 @@ class DeliveryMilestoneNotifier
                 'title' => 'Repartidor asignado',
                 'wa' => ($name !== '' ? "Hola {$name}, " : 'Hola, ')
                     ."tu pedido DondeMorales #{$order} ya tiene repartidor en JobsHours. "
-                    ."Pronto saldrá hacia tu dirección. Seguimiento: {$url}",
+                    ."Pronto saldrá hacia tu dirección. JobsHours: {$url} · Estado: {$track}",
                 'email_subject' => "DondeMorales — repartidor asignado (#{$order})",
             ],
             'in_progress' => [
@@ -59,7 +62,7 @@ class DeliveryMilestoneNotifier
                 'title' => 'Pedido entregado',
                 'wa' => ($name !== '' ? "Hola {$name}, " : 'Hola, ')
                     ."tu pedido DondeMorales #{$order} fue marcado como entregado en JobsHours. "
-                    ."¡Gracias por comprar con nosotros!",
+                    ."¡Gracias por comprar con nosotros! Resumen: {$track}",
                 'email_subject' => "DondeMorales — pedido entregado (#{$order})",
             ],
             default => null,
@@ -79,7 +82,7 @@ class DeliveryMilestoneNotifier
 
         $emailSent = false;
         $email = trim((string) ($venta->cliente_email ?? ''));
-        if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL) && CommerceMail::canSend()) {
             try {
                 Mail::raw(
                     $messages['wa']."\n\n— DondeMorales",

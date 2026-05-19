@@ -16,4 +16,7 @@ return [
     /** Comanda /api/ordenes/{id}/ticket requiere ?expires=&sig= (usa APP_KEY). */
     'ticket_require_signature' => (bool) env('COMMERCE_TICKET_REQUIRE_SIGNATURE', true),
 
+    /** Seguimiento público /seguimiento (30 días por defecto). */
+    'tracking_ttl_seconds' => (int) env('COMMERCE_TRACKING_TTL_SECONDS', 2_592_000),
+
 ];

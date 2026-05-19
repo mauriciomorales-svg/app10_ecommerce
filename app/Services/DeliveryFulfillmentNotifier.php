@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Mail\DeliveryJobsHoursReminderMail;
 use App\Models\Venta;
+use App\Support\CommerceMail;
+use App\Support\OrderTrackingUrl;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -47,12 +49,14 @@ class DeliveryFulfillmentNotifier
     private static function sendEmail(Venta $venta, string $url, int $amount): bool
     {
         $email = trim((string) ($venta->cliente_email ?? ''));
-        if ($email === '' || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if ($email === '' || ! filter_var($email, FILTER_VALIDATE_EMAIL) || ! CommerceMail::canSend()) {
             return false;
         }
 
+        $trackingUrl = OrderTrackingUrl::signed((int) $venta->idventa);
+
         try {
-            Mail::to($email)->send(new DeliveryJobsHoursReminderMail($venta, $url, $amount));
+            Mail::to($email)->send(new DeliveryJobsHoursReminderMail($venta, $url, $amount, $trackingUrl));
 
             return true;
         } catch (\Throwable $e) {
@@ -71,8 +75,10 @@ class DeliveryFulfillmentNotifier
         $name = trim((string) ($venta->cliente_nombre ?? ''));
         $greet = $name !== '' ? "Hola {$name}" : 'Hola';
 
+        $track = OrderTrackingUrl::signed((int) $venta->idventa);
+
         return "{$greet}, tu pedido DondeMorales #{$order} ya está pagado (productos confirmados). "
             .'Falta 1 paso: paga el envío (~$'.number_format($amount, 0, ',', '.').') en JobsHours: '
-            .$url;
+            .$url.' · Seguimiento: '.$track;
     }
 }

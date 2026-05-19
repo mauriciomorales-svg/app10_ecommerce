@@ -61,10 +61,12 @@ export type VentaPickupPublic = {
   fecha_retiro: string | null;
   fecha_retiro_label: string | null;
   codigo_retiro: string | null;
+  estado_retiro?: string | null;
   pickup_address: string;
   pickup_hours: string;
   whatsapp: string;
   ticket_url?: string | null;
+  tracking_url?: string | null;
   fulfillment_type?: FulfillmentType;
   delivery_amount?: number;
   delivery_address?: string | null;

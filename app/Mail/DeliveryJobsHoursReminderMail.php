@@ -16,7 +16,8 @@ class DeliveryJobsHoursReminderMail extends Mailable
     public function __construct(
         public Venta $venta,
         public string $customerUrl,
-        public int $deliveryAmount
+        public int $deliveryAmount,
+        public ?string $trackingUrl = null,
     ) {}
 
     public function envelope(): Envelope
@@ -40,6 +41,13 @@ class DeliveryJobsHoursReminderMail extends Mailable
         $amount = number_format($this->deliveryAmount, 0, ',', '.');
         $url = e($this->customerUrl);
         $address = e((string) ($this->venta->delivery_address ?? ''));
+        $trackBlock = '';
+        if ($this->trackingUrl) {
+            $track = e($this->trackingUrl);
+            $trackBlock = <<<HTML
+          <p style="margin:20px 0"><a href="{$track}" style="background:#16a34a;color:#fff;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:bold">Seguir estado del pedido</a></p>
+          HTML;
+        }
 
         return <<<HTML
         <div style="font-family:system-ui,sans-serif;max-width:520px;margin:0 auto;color:#1a1a2e">
@@ -48,6 +56,7 @@ class DeliveryJobsHoursReminderMail extends Mailable
           <p>Los <strong>productos</strong> ya están confirmados en DondeMorales.</p>
           <p>Falta un paso: pagar el <strong>envío a domicilio</strong> (~\${$amount}) en JobsHours, donde un repartidor tomará tu mandado.</p>
           <p style="margin:24px 0"><a href="{$url}" style="background:#d97706;color:#fff;padding:14px 24px;border-radius:10px;text-decoration:none;font-weight:bold">Pagar envío en JobsHours</a></p>
+          {$trackBlock}
           <p style="font-size:14px;color:#555">Destino: {$address}</p>
           <p style="font-size:13px;color:#888">Si no tienes cuenta en JobsHours, usa el mismo email del checkout para iniciar sesión o recuperar contraseña.</p>
         </div>

@@ -178,6 +178,7 @@ class CheckoutOrderService
 
             $fresh = $locked->fresh();
             JobsHoursStoreDemandService::publishForPaidVenta($fresh);
+            OrderCustomerNotifier::onOrderPaid($fresh->fresh());
 
             return $fresh;
         });

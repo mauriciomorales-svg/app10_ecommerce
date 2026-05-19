@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { CheckCircle, XCircle, Loader2, MapPin, Copy } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, MapPin, Copy, ExternalLink } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import type { VentaPickupPublic } from '../../lib/checkout';
 import { DeliveryOrderTimeline } from '../../components/DeliveryOrderTimeline';
@@ -261,6 +261,16 @@ function PagoResultadoContent() {
               </p>
             )}
           </div>
+
+          {venta.tracking_url && (
+            <a
+              href={venta.tracking_url}
+              className="inline-flex w-full items-center justify-center gap-2 px-6 py-3 mb-3 border-2 border-[#16a34a] text-[#16a34a] font-semibold rounded-xl bg-white"
+            >
+              <ExternalLink className="h-4 w-4" />
+              Seguir mi pedido
+            </a>
+          )}
 
           <Link
             href="/"

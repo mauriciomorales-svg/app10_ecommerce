@@ -31,6 +31,7 @@ line('MAIL_USERNAME', config('mail.mailers.smtp.username'));
 line('MAIL_PASSWORD', config('mail.mailers.smtp.password'));
 echo 'MAIL_FROM_ADDRESS: '.config('mail.from.address')."\n";
 echo 'MAIL_FROM_NAME: '.config('mail.from.name')."\n";
+echo 'CommerceMail::canSend: '.(App\Support\CommerceMail::canSend() ? 'SI' : 'NO')."\n";
 
 echo "\n=== Resend (alternativo) ===\n";
 line('RESEND_API_KEY', config('services.resend.key'));

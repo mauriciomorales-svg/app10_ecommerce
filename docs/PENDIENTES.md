@@ -10,7 +10,7 @@ Lista de trabajo **no urgente** o **postergado a propósito**.
 | Estado | Tarea | Notas |
 |--------|--------|--------|
 | ⏸️ Postergado | **WhatsApp automático (Cloud API)** | Sin `WHATSAPP_ACCESS_TOKEN` ni `WHATSAPP_PHONE_NUMBER_ID` en producción. Hoy solo enlaces `wa.me` en checkout y `/pago/resultado`. |
-| ⏸️ Pendiente | **Email en hitos de envío** | En VPS: `MAIL_MAILER=log`, `MAIL_FROM` genérico. Configurar Resend o SMTP cuando se quiera avisar por correo (asignado / en camino / entregado). |
+| ⏸️ Pendiente | **Email en producción** | Código listo (`CommerceMail`, confirmación al pagar, hitos). Falta en VPS: `MAIL_MAILER=resend` + `RESEND_API_KEY` (o SMTP). |
 | ⏸️ Pendiente | **Email alerta tienda** | `DELIVERY_ALERT_EMAIL` vacío en `.env` del servidor. |
 
 Verificación en servidor:
@@ -53,14 +53,14 @@ Tras rotar: `php artisan config:clear` y `pm2 reload dondemorales-api`.
 | Estado | Tarea | Notas |
 |--------|--------|--------|
 | ⏸️ Postergado | **Bot WhatsApp conversacional** (`app8_bot_whatsapp` u otro) | No es lo mismo que Cloud API. DondeMorales hoy no está enlazado a un bot que responda chats. |
-| 💡 Idea | Timeline / tracking público sin login | Compartir estado del pedido por link (tipo Uber). |
+| ✅ Hecho | **Seguimiento público** `/seguimiento` | Enlace firmado 30 días; poll cada 30 s; en pago/resultado y mensajes. |
 | 💡 Idea | WhatsApp solo recordatorio pago envío | Priorizar un solo mensaje automático antes que todos los hitos. |
 
 ---
 
 ## Hecho recientemente (referencia)
 
-- Timeline 5 pasos en `/pago/resultado`
+- Timeline 5 pasos en `/pago/resultado` + página `/seguimiento` (link firmado)
 - Sync estado JobsHours + migración `jobshours_request_status` / `jobshours_payment_status`
 - Pushes JobsHours (asignado, en camino, entregado) — API `ce16ab7`
 - Deploy producción vía `deploy-from-windows.ps1` (2026-05-19)

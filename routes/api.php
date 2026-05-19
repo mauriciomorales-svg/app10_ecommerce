@@ -68,5 +68,9 @@ Route::middleware('throttle:20,1')->group(function () {
 Route::get('/ordenes/{id}/ticket', [\App\Http\Controllers\Api\OrderTicketController::class, 'show'])
     ->middleware('ticket.signed');
 
+// Seguimiento de pedido (cliente, sin login)
+Route::get('/ordenes/{id}/seguimiento', [\App\Http\Controllers\Api\OrderTrackingController::class, 'show'])
+    ->middleware('ticket.signed');
+
 // Sugerencias de productos (completa tu regalo)
 Route::get('/productos/{id}/sugerencias', [\App\Http\Controllers\Api\ProductSuggestionController::class, 'index']);
