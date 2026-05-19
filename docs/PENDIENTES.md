@@ -68,6 +68,20 @@ Tras rotar: `php artisan config:clear` y `pm2 reload dondemorales-api`.
 
 ---
 
+## Pruebas simuladas
+
+```bash
+# Local o VPS (producción requiere --allow-production)
+php artisan commerce:simulate-delivery-order --mock-status=accepted --allow-production
+
+# Con mandado real en mapa JobsHours
+php artisan commerce:simulate-delivery-order --publish --mock-status=open --allow-production
+
+php scripts/smoke-mvp-tests.php
+```
+
+---
+
 ## Cómo usar este archivo
 
 1. Mover ítems a **Hecho** cuando se completen (con fecha).
