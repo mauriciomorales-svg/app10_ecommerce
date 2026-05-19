@@ -7,6 +7,7 @@ import { CheckCircle, XCircle, Loader2, MapPin, Copy, ExternalLink } from 'lucid
 import { useCart } from '../../context/CartContext';
 import type { VentaPickupPublic } from '../../lib/checkout';
 import { DeliveryOrderTimeline } from '../../components/DeliveryOrderTimeline';
+import { apiFetch } from '../../lib/api';
 
 const MAX_POLL_ATTEMPTS = 36;
 
@@ -87,7 +88,7 @@ function PagoResultadoContent() {
       const poll = async () => {
         if (bumpAttempt()) return;
         try {
-          const res = await fetch(`/api/pagos/mp-online/status?venta_id=${encodeURIComponent(ventaId)}`);
+          const res = await apiFetch(`/api/pagos/mp-online/status?venta_id=${encodeURIComponent(ventaId)}`);
           const data = await res.json();
           if (!data.success) {
             setMessage('Procesando pago...');
@@ -180,7 +181,7 @@ function PagoResultadoContent() {
               ? `venta_id=${encodeURIComponent(String(venta.idventa))}`
               : null;
         if (!q) return;
-        const res = await fetch(`/api/pagos/mp-online/status?${q}`);
+        const res = await apiFetch(`/api/pagos/mp-online/status?${q}`);
         const data = await res.json();
         if (data.success && data.venta) {
           setVenta((prev) => (prev ? { ...prev, ...data.venta } : data.venta));

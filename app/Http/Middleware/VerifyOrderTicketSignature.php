@@ -19,15 +19,24 @@ class VerifyOrderTicketSignature
         $signature = (string) $request->query('sig', '');
 
         if ($id <= 0 || $expires < time() || $signature === '') {
-            return response('Enlace de comanda no válido o expirado', 403);
+            return $this->deny($request, 'Enlace no válido o expirado');
         }
 
         $expected = hash_hmac('sha256', "{$id}:{$expires}", (string) config('app.key'));
 
         if (! hash_equals($expected, $signature)) {
-            return response('Enlace de comanda no válido', 403);
+            return $this->deny($request, 'Enlace no válido');
         }
 
         return $next($request);
+    }
+
+    private function deny(Request $request, string $message): Response
+    {
+        if ($request->is('api/*') || $request->expectsJson()) {
+            return response()->json(['success' => false, 'message' => $message], 403);
+        }
+
+        return response($message, 403);
     }
 }

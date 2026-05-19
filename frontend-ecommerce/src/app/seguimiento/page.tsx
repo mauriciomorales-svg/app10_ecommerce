@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Loader2, Package, MapPin, Copy, ExternalLink } from 'lucide-react';
 import type { VentaPickupPublic } from '../lib/checkout';
 import { DeliveryOrderTimeline } from '../components/DeliveryOrderTimeline';
+import { apiFetch } from '../lib/api';
 
 function SeguimientoContent() {
   const searchParams = useSearchParams();
@@ -28,8 +29,8 @@ function SeguimientoContent() {
 
     const load = async () => {
       try {
-        const res = await fetch(`/api/ordenes/${encodeURIComponent(id)}/seguimiento?${qs}`);
-        const data = await res.json();
+        const res = await apiFetch(`/api/ordenes/${encodeURIComponent(id)}/seguimiento?${qs}`);
+        const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.success || !data.venta) {
           setError(data.message || 'No pudimos cargar tu pedido. El enlace puede haber expirado.');
           setVenta(null);
