@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Categoria;
 use App\Models\Producto;
+use App\Support\CurrentCommerceStore;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class ProductoController extends Controller
 {
@@ -75,7 +78,28 @@ class ProductoController extends Controller
         }
 
         $productos = $query->paginate(24);
-        
+
+        // Agregar flag has_bundle_options para que el front sepa
+        // si debe abrir el builder (variantes, extras o sugerencias configuradas)
+        $ids = $productos->pluck('idproducto')->toArray();
+        $conBundle = \DB::table('product_bundle_options')
+            ->whereIn('parent_product_id', $ids)
+            ->pluck('parent_product_id')
+            ->unique()
+            ->toArray();
+        $conSugerencias = \DB::table('producto_sugerencias')
+            ->whereIn('producto_origen_id', $ids)
+            ->where('activo', true)
+            ->pluck('producto_origen_id')
+            ->unique()
+            ->toArray();
+        $conConfig = array_unique(array_merge($conBundle, $conSugerencias));
+
+        $productos->getCollection()->transform(function ($p) use ($conConfig) {
+            $p->has_bundle_options = in_array($p->idproducto, $conConfig);
+            return $p;
+        });
+
         return response()->json($productos);
     }
 
@@ -178,7 +202,14 @@ class ProductoController extends Controller
 
     public function categorias()
     {
-        $categorias = \App\Models\Categoria::orderBy('nombre')->get();
-        return response()->json($categorias);
+        $q = Categoria::query()->orderBy('nombre');
+        $storeId = CurrentCommerceStore::id();
+        if ($storeId !== null && Schema::hasColumn('productos', 'commerce_store_id')) {
+            $q->whereHas('productos', function ($sub) use ($storeId) {
+                $sub->where('productos.commerce_store_id', $storeId);
+            });
+        }
+
+        return response()->json($q->get());
     }
 }

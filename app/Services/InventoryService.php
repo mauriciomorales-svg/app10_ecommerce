@@ -31,11 +31,24 @@ class InventoryService
             $cantidad = $detalle->cantidad;
             $bundleConfig = null;
 
-            if (!empty($detalle->bundle_configuration)) {
+            if (! empty($detalle->bundle_configuration)) {
                 $bundleConfig = json_decode($detalle->bundle_configuration, true);
             }
 
-            if ($producto->es_pack && $bundleConfig && !empty($bundleConfig['modifiers'])) {
+            if (is_array($bundleConfig) && ! empty($bundleConfig['is_packaging'])) {
+                if ($producto->stock_actual >= $cantidad) {
+                    $producto->decrement('stock_actual', $cantidad);
+                    $deducted[] = [
+                        'producto' => $producto->nombre,
+                        'cantidad' => $cantidad,
+                        'tipo' => 'packaging',
+                    ];
+                }
+
+                continue;
+            }
+
+            if ($producto->es_pack && $bundleConfig && ! empty($bundleConfig['modifiers'])) {
                 // Pack con bundle dinámico: descontar stock de cada child seleccionado
                 foreach ($bundleConfig['modifiers'] as $modifier) {
                     $childId = $modifier['child_product_id'] ?? null;
@@ -90,6 +103,34 @@ class InventoryService
                     ];
                 } else {
                     Log::warning("InventoryService: Stock insuficiente {$producto->nombre}");
+                }
+            }
+
+            if (is_array($bundleConfig) && ! empty($bundleConfig['suggestions'])) {
+                foreach ($bundleConfig['suggestions'] as $suggestion) {
+                    if (! is_array($suggestion)) {
+                        continue;
+                    }
+                    $sid = (int) ($suggestion['idproducto'] ?? 0);
+                    if ($sid <= 0) {
+                        continue;
+                    }
+                    $sProduct = Producto::find($sid);
+                    if (! $sProduct) {
+                        continue;
+                    }
+                    $sQty = $cantidad;
+                    if ($sProduct->stock_actual >= $sQty) {
+                        $sProduct->decrement('stock_actual', $sQty);
+                        $deducted[] = [
+                            'producto' => $sProduct->nombre,
+                            'cantidad' => $sQty,
+                            'tipo' => 'bundle_suggestion',
+                        ];
+                        $sProduct->increment('veces_vendido', $sQty);
+                    } else {
+                        Log::warning("InventoryService: Stock insuficiente sugerencia {$sProduct->nombre}");
+                    }
                 }
             }
 

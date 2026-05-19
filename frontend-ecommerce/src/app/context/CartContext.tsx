@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { toCLP } from '../lib/money';
 
 export interface CartItem {
   idproducto: number;
@@ -9,10 +10,35 @@ export interface CartItem {
   imagen: string | null;
   cantidad: number;
   stock: number;
+  idcategoria?: number | null;
   bundle_configuration?: {
     modifiers?: object[];
     customization?: object;
     suggestions?: { idproducto: number; nombre: string; precio_venta: number; imagen_url?: string }[];
+  };
+}
+
+function normalizeItem(raw: CartItem): CartItem {
+  const precio = toCLP(raw.precio_venta);
+  const stock = typeof raw.stock === 'number' ? raw.stock : Number(raw.stock) || 0;
+  const cantidad = typeof raw.cantidad === 'number' ? raw.cantidad : Number(raw.cantidad) || 1;
+  const bundle = raw.bundle_configuration;
+  let bundle_configuration = bundle;
+  if (bundle?.suggestions?.length) {
+    bundle_configuration = {
+      ...bundle,
+      suggestions: bundle.suggestions.map(s => ({
+        ...s,
+        precio_venta: toCLP(s.precio_venta),
+      })),
+    };
+  }
+  return {
+    ...raw,
+    precio_venta: precio,
+    stock,
+    cantidad: Math.max(1, cantidad),
+    bundle_configuration,
   };
 }
 
@@ -37,7 +63,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const saved = localStorage.getItem('cart');
     if (saved) {
       try {
-        setItems(JSON.parse(saved));
+        const parsed = JSON.parse(saved) as CartItem[];
+        setItems(Array.isArray(parsed) ? parsed.map(normalizeItem) : []);
       } catch {}
     }
   }, []);
@@ -49,8 +76,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [items, mounted]);
 
   const addToCart = (product: Omit<CartItem, 'cantidad'>) => {
+    const p = normalizeItem({ ...product, cantidad: 1 });
     setItems(prev => {
-      const existing = prev.find(i => i.idproducto === product.idproducto);
+      const existing = prev.find(i => i.idproducto === p.idproducto);
       if (existing) {
         const newCantidad = Math.min(existing.cantidad + 1, product.stock);
         return prev.map(i =>
@@ -59,7 +87,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             : i
         );
       }
-      return [...prev, { ...product, cantidad: 1 }];
+      return [...prev, p];
     });
   };
 
@@ -81,7 +109,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = () => setItems([]);
 
-  const total = items.reduce((sum, i) => sum + i.precio_venta * i.cantidad, 0);
+  const total = items.reduce((sum, i) => sum + toCLP(i.precio_venta) * i.cantidad, 0);
   const count = items.reduce((sum, i) => sum + i.cantidad, 0);
 
   return (

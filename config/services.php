@@ -41,4 +41,11 @@ return [
         'sandbox' => env('FLOW_SANDBOX', false),
     ],
 
+    'mercadopago' => [
+        // Usar las mismas llaves que el resto del ecosistema (mi_ventas / inventario-api / jobshour-api)
+        // (algunas apps usan MP_ACCESS_TOKEN como alias)
+        'access_token' => env('MERCADOPAGO_ACCESS_TOKEN') ?: env('MP_ACCESS_TOKEN', ''),
+        'webhook_secret' => env('MERCADOPAGO_WEBHOOK_SECRET', ''),
+    ],
+
 ];

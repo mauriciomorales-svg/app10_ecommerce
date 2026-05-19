@@ -4,75 +4,76 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Venta;
-use App\Services\InventoryService;
+use App\Services\CheckoutOrderService;
+use App\Services\JobsHoursDeliveryStatusService;
+use App\Services\PickupFulfillmentService;
+use App\Support\CheckoutRequestValidator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class FlowController extends Controller
 {
     public function iniciar(Request $request)
     {
-        $request->validate([
-            'items' => 'required|array',
-            'cliente' => 'required|array',
-            'total' => 'required|numeric|min:1',
-        ]);
-
-        $items = $request->items;
-        $cliente = $request->cliente;
-        $total = $request->total;
-
-        $numVenta = (int) (time() % 100000000);
-        $venta = Venta::create([
-            'numero_venta' => $numVenta,
-            'fecha' => now(),
-            'total' => $total,
-            'subtotal' => $total,
-            'descuento' => 0,
-            'medio_pago' => 'flow',
-            'estado' => 'pendiente',
-            'observaciones' => 'Pago online - ' . ($cliente['nombre'] ?? '') . ' - ' . ($cliente['email'] ?? ''),
-        ]);
-
-        foreach ($items as $item) {
-            $insertData = [
-                'idventa' => $venta->idventa,
-                'idproducto' => $item['idproducto'],
-                'cantidad' => $item['cantidad'],
-                'precio_unitario' => $item['precio_venta'],
-                'subtotal' => $item['precio_venta'] * $item['cantidad'],
-            ];
-            if (!empty($item['bundle_configuration'])) {
-                $insertData['bundle_configuration'] = json_encode($item['bundle_configuration']);
-            }
-            DB::table('detalle_venta')->insert($insertData);
+        if (!$this->isEnabled()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Flow está deshabilitado temporalmente',
+                'code' => 'PAYMENT_PROVIDER_DISABLED',
+            ], 503);
         }
 
-        $flowApiKey = config('services.flow.api_key', '');
-        $flowSecret = config('services.flow.secret_key', '');
+        $checkout = CheckoutRequestValidator::validatePaymentStart($request);
+        $cliente = $checkout['cliente'];
+        $packagingKey = $checkout['packaging_key'];
+        $items = $checkout['items'];
+
+        $venta = CheckoutOrderService::createPendingOrder(
+            $items,
+            $cliente,
+            $packagingKey,
+            'flow',
+            $checkout['fulfillment_type'],
+            $checkout['delivery'],
+            $checkout['totals']
+        );
+        $total = (int) round((float) $venta->total);
+
+        $flowApiKey = trim((string) config('services.flow.api_key', ''));
+        $flowSecret = trim((string) config('services.flow.secret_key', ''));
         $flowEndpoint = config('services.flow.sandbox', false)
             ? 'https://sandbox.flow.cl/api'
             : 'https://www.flow.cl/api';
+        $backendUrl = rtrim(config('app.url', 'https://dondemorales.cl'), '/');
+
+        if (empty($flowApiKey) || empty($flowSecret)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Flow no configurado en servidor',
+                'error' => 'Faltan FLOW_API_KEY y/o FLOW_SECRET_KEY en entorno de producción',
+            ], 503);
+        }
 
         $orderData = [
             'apiKey' => $flowApiKey,
             'commerceOrder' => 'FLOW-' . $venta->idventa,
-            'subject' => 'Compra DondeMorales - San Valentin',
+            'subject' => 'DondeMorales — Pedido #'.$venta->idventa,
             'currency' => 'CLP',
             'amount' => (int) round($total),
             'email' => $cliente['email'],
             'paymentMethod' => 9,
-            'urlConfirmation' => 'https://www.dondemorales.cl/api/pagos/flow/confirm',
-            'urlReturn' => 'https://www.dondemorales.cl/api/pagos/flow/return',
+            'urlConfirmation' => $backendUrl . '/api/pagos/flow/confirm',
+            'urlReturn' => $backendUrl . '/api/pagos/flow/return',
         ];
 
         $orderData['s'] = $this->sign($orderData, $flowSecret);
 
         try {
             $response = $this->send($flowEndpoint . '/payment/create', $orderData);
-            \Log::info('Flow response: ' . $response);
-            \Log::info('Flow endpoint: ' . $flowEndpoint);
-            \Log::info('Flow orderData: ' . json_encode($orderData));
+            \Log::info('Flow payment/create', [
+                'endpoint' => $flowEndpoint,
+                'venta_id' => $venta->idventa,
+                'amount' => $total,
+            ]);
             $result = json_decode($response, true);
 
             if (isset($result['url']) && isset($result['token'])) {
@@ -80,7 +81,8 @@ class FlowController extends Controller
                     'success' => true,
                     'url' => $result['url'],
                     'token' => $result['token'],
-                    'order' => $venta->num_comprobante,
+                    'venta_id' => $venta->idventa,
+                    'total' => $total,
                 ]);
             }
 
@@ -110,13 +112,13 @@ class FlowController extends Controller
             return response()->json(['error' => 'Token no recibido'], 400);
         }
 
-        $flowSecret = config('services.flow.secret_key', '');
+        $flowSecret = trim((string) config('services.flow.secret_key', ''));
         $flowEndpoint = config('services.flow.sandbox', false)
             ? 'https://sandbox.flow.cl/api'
             : 'https://www.flow.cl/api';
 
         $params = [
-            'apiKey' => config('services.flow.api_key', ''),
+            'apiKey' => trim((string) config('services.flow.api_key', '')),
             'token' => $token,
         ];
         $params['s'] = $this->sign($params, $flowSecret);
@@ -134,16 +136,25 @@ class FlowController extends Controller
                     $status = $result['status'] ?? 0;
 
                     if ($status == 2) {
-                        $venta->update(['estado' => 'pagado', 'medio_pago' => 'flow', 'fecha_finalizada' => now()]);
-                        InventoryService::deductStockForVenta($venta->idventa);
+                        $venta = CheckoutOrderService::markPaid($venta, 'flow');
                     } elseif ($status == 3 || $status == 4) {
-                        $venta->update(['estado' => 'Rechazado']);
+                        $venta->update(['estado' => 'rechazado']);
+                    }
+
+                    $venta = $venta->fresh();
+                    if (
+                        $status == 2
+                        && (string) ($venta->fulfillment_type ?? 'pickup') === 'delivery'
+                        && $venta->jobshours_request_id
+                    ) {
+                        JobsHoursDeliveryStatusService::syncVenta($venta);
+                        $venta->refresh();
                     }
 
                     return response()->json([
                         'success' => $status == 2,
                         'status' => $status,
-                        'venta' => $venta,
+                        'venta' => PickupFulfillmentService::ventaToPublicArray($venta),
                     ]);
                 }
             }
@@ -183,8 +194,15 @@ class FlowController extends Controller
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 20);
         $response = curl_exec($ch);
+        if ($response === false) {
+            $error = curl_error($ch);
+            curl_close($ch);
+            throw new \RuntimeException('Flow cURL error: ' . $error);
+        }
         curl_close($ch);
         return $response;
     }
@@ -194,9 +212,21 @@ class FlowController extends Controller
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url . '?' . http_build_query($params));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 20);
         $response = curl_exec($ch);
+        if ($response === false) {
+            $error = curl_error($ch);
+            curl_close($ch);
+            throw new \RuntimeException('Flow cURL error: ' . $error);
+        }
         curl_close($ch);
         return $response;
+    }
+
+    private function isEnabled(): bool
+    {
+        return (bool) config('payments.providers.flow.enabled', true);
     }
 }

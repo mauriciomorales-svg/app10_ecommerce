@@ -7,6 +7,10 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Ecommerce (multi-tienda / plantilla premium)
+
+Varias tiendas sobre la misma BD: tabla `commerce_stores`, columna `productos.commerce_store_id`, resolución por **Host** en la API. Guía: **`docs/COMMERCE_MULTI_STORE.md`**. Alta: `php artisan commerce:store-create {slug} "Nombre" --host=dominio.cl --template`.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

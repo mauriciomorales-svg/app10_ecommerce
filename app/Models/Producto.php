@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Schema;
+use App\Support\CurrentCommerceStore;
 
 class Producto extends Model
 {
@@ -30,6 +33,7 @@ class Producto extends Model
         'es_pack',
         'ultima_venta',
         'veces_vendido',
+        'commerce_store_id',
     ];
 
     protected $casts = [
@@ -47,6 +51,43 @@ class Producto extends Model
 
     protected $hidden = ['imagen'];
     protected $appends = ['precio_venta', 'stock', 'imagen_url', 'stock_disponible', 'has_bundle_options', 'has_customization'];
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('commerce_store', function (Builder $builder): void {
+            if (! Schema::hasColumn((new static)->getTable(), 'commerce_store_id')) {
+                return;
+            }
+            $id = CurrentCommerceStore::id();
+            if ($id === null) {
+                return;
+            }
+            $builder->where($builder->getModel()->getTable().'.commerce_store_id', $id);
+        });
+
+        static::creating(function (Producto $producto): void {
+            if (! Schema::hasColumn($producto->getTable(), 'commerce_store_id')) {
+                return;
+            }
+            if ($producto->commerce_store_id !== null) {
+                return;
+            }
+            $id = CurrentCommerceStore::id();
+            if ($id === null) {
+                $id = CommerceStore::query()
+                    ->where('slug', (string) config('commerce.default_store_slug', 'default'))
+                    ->value('id');
+            }
+            if ($id !== null) {
+                $producto->commerce_store_id = (int) $id;
+            }
+        });
+    }
+
+    public function commerceStore(): BelongsTo
+    {
+        return $this->belongsTo(CommerceStore::class, 'commerce_store_id');
+    }
 
     public function getImagenUrlAttribute()
     {

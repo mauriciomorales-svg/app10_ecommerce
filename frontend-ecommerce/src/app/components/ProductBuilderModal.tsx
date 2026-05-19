@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { X, Package, Check, ChevronRight, Heart, Loader2 } from 'lucide-react';
+import { X, Package, Check, ChevronRight, Loader2 } from 'lucide-react';
+import { formatCLP, toCLP } from '../lib/money';
 
 interface BundleOption {
   id: number;
@@ -36,6 +37,7 @@ interface ProductDetail {
   imagen_url: string | null;
   descripcion: string | null;
   es_pack: boolean;
+  categorias?: { idcategoria: number; nombre: string }[];
   bundle_groups?: BundleGroup[];
   customization_fields?: CustomField[];
 }
@@ -56,9 +58,10 @@ interface SuggestedProduct {
   mensaje: string;
 }
 
-function formatPrice(price: number) {
-  if (!price) return '$0';
-  return '$' + Math.round(price).toLocaleString('es-CL');
+function formatPrice(price: number | unknown) {
+  const n = toCLP(price);
+  if (!n) return '$0';
+  return '$' + formatCLP(n);
 }
 
 export default function ProductBuilderModal({
@@ -73,6 +76,7 @@ export default function ProductBuilderModal({
     nombre: string;
     precio_venta: number;
     imagen: string | null;
+    idcategoria?: number | null;
     bundle_configuration: {
       modifiers?: object[];
       customization?: object;
@@ -120,9 +124,9 @@ export default function ProductBuilderModal({
   const totalSteps = bundleGroups.length + (customFields.length > 0 ? 1 : 0) + (suggestions.length > 0 ? 1 : 0) + 1; // +1 for summary
 
   // Calculate dynamic price
-  const basePrice = product?.precio_venta || 0;
-  const modifierTotal = Object.values(radioSelections).reduce((sum, s) => sum + s.precio, 0)
-    + Object.values(checkboxSelections).flat().reduce((sum, s) => sum + s.precio, 0);
+  const basePrice = toCLP(product?.precio_venta);
+  const modifierTotal = Object.values(radioSelections).reduce((sum, s) => sum + toCLP(s.precio), 0)
+    + Object.values(checkboxSelections).flat().reduce((sum, s) => sum + toCLP(s.precio), 0);
   const totalPrice = basePrice + modifierTotal;
 
   // Validation
@@ -197,7 +201,7 @@ export default function ProductBuilderModal({
     if (!product || !allRequiredValid()) return;
 
     const selectedSuggestionObjects = suggestions.filter(s => selectedSuggestions.includes(s.idproducto));
-    const suggestionsTotal = selectedSuggestionObjects.reduce((sum, s) => sum + s.precio_venta, 0);
+    const suggestionsTotal = selectedSuggestionObjects.reduce((sum, s) => sum + toCLP(s.precio_venta), 0);
 
     const bundleConfig = {
       modifiers: [
@@ -213,6 +217,7 @@ export default function ProductBuilderModal({
       nombre: product.nombre,
       precio_venta: totalPrice + suggestionsTotal,
       imagen: product.imagen_url,
+      idcategoria: product.categorias?.[0]?.idcategoria ?? null,
       bundle_configuration: bundleConfig,
     });
     onClose();
@@ -222,7 +227,7 @@ export default function ProductBuilderModal({
     return (
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center" onClick={onClose}>
         <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-lg p-8 flex flex-col items-center" onClick={e => e.stopPropagation()}>
-          <Loader2 className="h-10 w-10 text-[#d81b60] animate-spin mb-4" />
+          <Loader2 className="h-10 w-10 text-[#16a34a] animate-spin mb-4" />
           <p className="text-gray-400">Cargando...</p>
         </div>
       </div>
@@ -243,12 +248,12 @@ export default function ProductBuilderModal({
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#880e4f] to-[#d81b60] p-5 flex items-center justify-between">
+        <div className="bg-gradient-to-r from-[#166534] to-[#16a34a] p-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Heart className="h-5 w-5 text-pink-200 fill-pink-200" />
+            <Package className="h-5 w-5 text-emerald-200" />
             <div>
               <h2 className="font-bold text-white text-lg leading-tight">{product.nombre}</h2>
-              <p className="text-pink-200 text-xs mt-0.5">Paso {step + 1} de {totalSteps}</p>
+              <p className="text-emerald-200 text-xs mt-0.5">Paso {step + 1} de {totalSteps}</p>
             </div>
           </div>
           <button onClick={onClose} className="text-white/70 hover:text-white transition-colors">
@@ -257,9 +262,9 @@ export default function ProductBuilderModal({
         </div>
 
         {/* Progress bar */}
-        <div className="h-1 bg-pink-100">
+        <div className="h-1 bg-emerald-100">
           <div
-            className="h-full bg-[#d81b60] transition-all duration-300"
+            className="h-full bg-[#16a34a] transition-all duration-300"
             style={{ width: `${((step + 1) / totalSteps) * 100}%` }}
           />
         </div>
@@ -272,7 +277,7 @@ export default function ProductBuilderModal({
               <h3 className="font-bold text-[#1a1a2e] text-lg mb-1">{currentGroup.group_name}</h3>
               <p className="text-gray-400 text-sm mb-4">
                 {currentGroup.input_type === 'radio' ? 'Selecciona una opci\u00f3n' : 'Puedes elegir varias'}
-                {currentGroup.is_required && <span className="text-[#d81b60] ml-1">*</span>}
+                {currentGroup.is_required && <span className="text-[#16a34a] ml-1">*</span>}
               </p>
               <div className="space-y-3">
                 {currentGroup.options.map(option => {
@@ -290,8 +295,8 @@ export default function ProductBuilderModal({
                       }
                       className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all text-left ${
                         isSelected
-                          ? 'border-[#d81b60] bg-pink-50 shadow-md'
-                          : 'border-gray-100 hover:border-pink-200 hover:bg-gray-50'
+                          ? 'border-[#16a34a] bg-emerald-50 shadow-md'
+                          : 'border-gray-100 hover:border-emerald-200 hover:bg-gray-50'
                       }`}
                     >
                       {option.imagen_url ? (
@@ -303,12 +308,12 @@ export default function ProductBuilderModal({
                       )}
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-[#1a1a2e] text-sm">{option.nombre}</p>
-                        <p className={`text-sm font-bold mt-0.5 ${option.precio === 0 ? 'text-emerald-500' : 'text-[#d81b60]'}`}>
+                        <p className={`text-sm font-bold mt-0.5 ${option.precio === 0 ? 'text-emerald-500' : 'text-[#16a34a]'}`}>
                           {option.precio === 0 ? 'Incluido' : `+${formatPrice(option.precio)}`}
                         </p>
                       </div>
                       <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                        isSelected ? 'border-[#d81b60] bg-[#d81b60]' : 'border-gray-300'
+                        isSelected ? 'border-[#16a34a] bg-[#16a34a]' : 'border-gray-300'
                       }`}>
                         {isSelected && <Check className="h-4 w-4 text-white" />}
                       </div>
@@ -322,16 +327,16 @@ export default function ProductBuilderModal({
           {/* Customization Step */}
           {isCustomStep && (
             <div>
-              <h3 className="font-bold text-[#1a1a2e] text-lg mb-1">Personaliza tu regalo</h3>
+              <h3 className="font-bold text-[#1a1a2e] text-lg mb-1">Personaliza tu pedido</h3>
               <p className="text-gray-400 text-sm mb-4">Agrega un toque especial</p>
               <div className="space-y-4">
                 {customFields.map(field => (
                   <div key={field.id}>
                     <label className="block text-sm font-semibold text-[#1a1a2e] mb-1.5">
                       {field.label}
-                      {field.is_required && <span className="text-[#d81b60] ml-1">*</span>}
+                      {field.is_required && <span className="text-[#16a34a] ml-1">*</span>}
                       {field.extra_cost > 0 && (
-                        <span className="text-[#d81b60] font-normal ml-2">(+{formatPrice(field.extra_cost)})</span>
+                        <span className="text-[#16a34a] font-normal ml-2">(+{formatPrice(field.extra_cost)})</span>
                       )}
                     </label>
                     {field.field_type === 'text' && (
@@ -340,7 +345,7 @@ export default function ProductBuilderModal({
                         value={customValues[field.field_key] || ''}
                         onChange={e => setCustomValues(prev => ({ ...prev, [field.field_key]: e.target.value }))}
                         placeholder={field.label}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#d81b60] focus:ring-2 focus:ring-pink-100 outline-none text-sm transition-all"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#16a34a] focus:ring-2 focus:ring-emerald-100 outline-none text-sm transition-all"
                         maxLength={100}
                       />
                     )}
@@ -350,7 +355,7 @@ export default function ProductBuilderModal({
                         onChange={e => setCustomValues(prev => ({ ...prev, [field.field_key]: e.target.value }))}
                         placeholder={field.label}
                         rows={3}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#d81b60] focus:ring-2 focus:ring-pink-100 outline-none text-sm transition-all resize-none"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#16a34a] focus:ring-2 focus:ring-emerald-100 outline-none text-sm transition-all resize-none"
                         maxLength={500}
                       />
                     )}
@@ -362,8 +367,8 @@ export default function ProductBuilderModal({
                             onClick={() => setCustomValues(prev => ({ ...prev, [field.field_key]: val }))}
                             className={`px-4 py-2.5 rounded-xl border-2 text-sm font-medium transition-all ${
                               customValues[field.field_key] === val
-                                ? 'border-[#d81b60] bg-pink-50 text-[#d81b60]'
-                                : 'border-gray-100 text-gray-600 hover:border-pink-200'
+                                ? 'border-[#16a34a] bg-emerald-50 text-[#16a34a]'
+                                : 'border-gray-100 text-gray-600 hover:border-emerald-200'
                             }`}
                           >
                             {val}
@@ -380,7 +385,7 @@ export default function ProductBuilderModal({
           {/* Suggestions Step */}
           {isSuggestionsStep && (
             <div>
-              <h3 className="font-bold text-[#1a1a2e] text-lg mb-1">🎁 Completa tu regalo</h3>
+              <h3 className="font-bold text-[#1a1a2e] text-lg mb-1">Agrega a tu pedido</h3>
               <p className="text-gray-400 text-sm mb-4">Los que compraron esto también llevaron...</p>
               <div className="space-y-3">
                 {suggestions.map(suggestion => {
@@ -391,8 +396,8 @@ export default function ProductBuilderModal({
                       onClick={() => toggleSuggestion(suggestion.idproducto)}
                       className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all text-left ${
                         isSelected
-                          ? 'border-[#d81b60] bg-pink-50 shadow-md'
-                          : 'border-gray-100 hover:border-pink-200 hover:bg-gray-50'
+                          ? 'border-[#16a34a] bg-emerald-50 shadow-md'
+                          : 'border-gray-100 hover:border-emerald-200 hover:bg-gray-50'
                       }`}
                     >
                       {suggestion.imagen_url ? (
@@ -405,10 +410,10 @@ export default function ProductBuilderModal({
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-[#1a1a2e] text-sm">{suggestion.nombre}</p>
                         <p className="text-xs text-gray-500 mt-0.5">{suggestion.mensaje}</p>
-                        <p className="text-sm font-bold mt-1 text-[#d81b60]">{formatPrice(suggestion.precio_venta)}</p>
+                        <p className="text-sm font-bold mt-1 text-[#16a34a]">{formatPrice(suggestion.precio_venta)}</p>
                       </div>
                       <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                        isSelected ? 'border-[#d81b60] bg-[#d81b60]' : 'border-gray-300'
+                        isSelected ? 'border-[#16a34a] bg-[#16a34a]' : 'border-gray-300'
                       }`}>
                         {isSelected && <Check className="h-4 w-4 text-white" />}
                       </div>
@@ -438,7 +443,7 @@ export default function ProductBuilderModal({
                       <p className="text-xs text-gray-400">{group}</p>
                       <p className="text-sm font-medium text-[#1a1a2e]">{sel.nombre}</p>
                     </div>
-                    <span className={`font-bold text-sm ${sel.precio === 0 ? 'text-emerald-500' : 'text-[#d81b60]'}`}>
+                    <span className={`font-bold text-sm ${sel.precio === 0 ? 'text-emerald-500' : 'text-[#16a34a]'}`}>
                       {sel.precio === 0 ? 'Incluido' : `+${formatPrice(sel.precio)}`}
                     </span>
                   </div>
@@ -452,7 +457,7 @@ export default function ProductBuilderModal({
                         <p className="text-xs text-gray-400">{group}</p>
                         <p className="text-sm font-medium text-[#1a1a2e]">{sel.nombre}</p>
                       </div>
-                      <span className="font-bold text-sm text-[#d81b60]">+{formatPrice(sel.precio)}</span>
+                      <span className="font-bold text-sm text-[#16a34a]">+{formatPrice(sel.precio)}</span>
                     </div>
                   ))
                 )}
@@ -469,9 +474,9 @@ export default function ProductBuilderModal({
                 })}
 
                 {/* Total */}
-                <div className="flex justify-between items-center pt-4 border-t-2 border-[#d81b60]/20">
+                <div className="flex justify-between items-center pt-4 border-t-2 border-[#16a34a]/20">
                   <span className="font-bold text-lg text-[#1a1a2e]">Total</span>
-                  <span className="font-black text-2xl text-[#d81b60]">{formatPrice(totalPrice)}</span>
+                  <span className="font-black text-2xl text-[#16a34a]">{formatPrice(totalPrice)}</span>
                 </div>
               </div>
             </div>
@@ -482,13 +487,13 @@ export default function ProductBuilderModal({
         <div className="p-5 border-t border-gray-100 bg-gray-50/50">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm text-gray-500">Total</span>
-            <span className="font-black text-xl text-[#d81b60]">{formatPrice(totalPrice)}</span>
+            <span className="font-black text-xl text-[#16a34a]">{formatPrice(totalPrice)}</span>
           </div>
           <div className="flex gap-3">
             {step > 0 && (
               <button
                 onClick={() => setStep(s => s - 1)}
-                className="px-5 py-3 rounded-xl border border-pink-200 text-[#d81b60] font-semibold text-sm hover:bg-pink-50 transition-all"
+                className="px-5 py-3 rounded-xl border border-emerald-200 text-[#16a34a] font-semibold text-sm hover:bg-emerald-50 transition-all"
               >
                 Atr&aacute;s
               </button>
@@ -497,7 +502,7 @@ export default function ProductBuilderModal({
               <button
                 onClick={() => setStep(s => s + 1)}
                 disabled={!isCurrentStepValid()}
-                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#d81b60] text-white font-semibold text-sm hover:bg-[#ad1457] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#16a34a] text-white font-semibold text-sm hover:bg-[#15803d] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Siguiente <ChevronRight className="h-4 w-4" />
               </button>
@@ -505,9 +510,9 @@ export default function ProductBuilderModal({
               <button
                 onClick={handleAddToCart}
                 disabled={!allRequiredValid()}
-                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#d81b60] text-white font-bold text-sm hover:bg-[#ad1457] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#16a34a] text-white font-bold text-sm hover:bg-[#15803d] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                <Heart className="h-4 w-4 fill-white" /> Agregar al pedido
+                <Check className="h-4 w-4" /> Agregar al pedido
               </button>
             )}
           </div>
@@ -516,3 +521,4 @@ export default function ProductBuilderModal({
     </div>
   );
 }
+

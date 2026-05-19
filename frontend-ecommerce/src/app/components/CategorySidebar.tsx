@@ -41,9 +41,9 @@ export default function CategorySidebar() {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden sticky top-20">
-      <div className="bg-gradient-to-r from-[#880e4f] to-[#d81b60] p-5">
+      <div className="bg-gradient-to-r from-[#166534] to-[#16a34a] p-5">
         <h3 className="font-bold text-white flex items-center gap-2">
-          <Package className="h-5 w-5 text-pink-200" />
+          <Package className="h-5 w-5 text-emerald-200" />
           Categorías
         </h3>
       </div>
@@ -52,7 +52,7 @@ export default function CategorySidebar() {
         <div className="space-y-1">
           <button
             onClick={() => setCategoria('')}
-            className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${!categoriaActiva ? 'bg-[#d81b60] text-white shadow-md shadow-pink-500/20' : 'text-gray-600 hover:bg-gray-50'}`}
+            className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${!categoriaActiva ? 'bg-[#16a34a] text-white shadow-md shadow-emerald-500/20' : 'text-gray-600 hover:bg-gray-50'}`}
           >
             <span>Todas</span>
             <ChevronRight className="h-4 w-4 opacity-50" />
@@ -61,7 +61,7 @@ export default function CategorySidebar() {
             <button
               key={cat.idcategoria}
               onClick={() => setCategoria(cat.idcategoria.toString())}
-              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${categoriaActiva === cat.idcategoria.toString() ? 'bg-[#d81b60] text-white shadow-md shadow-pink-500/20' : 'text-gray-600 hover:bg-gray-50'}`}
+              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${categoriaActiva === cat.idcategoria.toString() ? 'bg-[#16a34a] text-white shadow-md shadow-emerald-500/20' : 'text-gray-600 hover:bg-gray-50'}`}
             >
               <span>{cat.nombre}</span>
               <ChevronRight className="h-4 w-4 opacity-50" />
@@ -75,7 +75,7 @@ export default function CategorySidebar() {
         <select
           value={ordenActivo}
           onChange={(e) => setOrden(e.target.value)}
-          className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:ring-2 focus:ring-[#d81b60]/20 focus:border-[#d81b60] outline-none transition-all"
+          className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:ring-2 focus:ring-[#16a34a]/20 focus:border-[#16a34a] outline-none transition-all"
         >
           <option value="nuevos">Más nuevos</option>
           <option value="precio_menor">Precio: menor a mayor</option>
@@ -86,3 +86,4 @@ export default function CategorySidebar() {
     </div>
   );
 }
+

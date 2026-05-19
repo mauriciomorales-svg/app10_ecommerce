@@ -51,6 +51,18 @@ body {
   .input-search::placeholder {
     @apply text-gray-400;
   }
+
+  .retail-shelf {
+    @apply grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3;
+  }
+
+  .product-thumb {
+    @apply relative w-full aspect-square overflow-hidden bg-white;
+  }
+
+  .product-thumb img {
+    @apply absolute inset-0 w-full h-full object-contain object-center p-2;
+  }
 }
 
 @keyframes fadeInUp {

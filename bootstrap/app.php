@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,8 +13,20 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->api(append: [
+            \App\Http\Middleware\AssignCommerceStore::class,
+        ]);
+        $middleware->alias([
+            'ticket.signed' => \App\Http\Middleware\VerifyOrderTicketSignature::class,
+            'legacy.pos.ventas' => \App\Http\Middleware\LegacyPosVentasApiEnabled::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->withSchedule(function (Schedule $schedule): void {
+        $schedule->command('commerce:retry-jobshours-publish')->everyFiveMinutes();
+        $schedule->command('commerce:sync-jobshours-status')->everyTenMinutes();
+        $schedule->command('commerce:remind-pending-delivery-payment')->hourly();
+    })
+    ->create();

@@ -3,16 +3,31 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Support\CurrentCommerceStore;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class ProductSuggestionController extends Controller
 {
     public function index($productoId)
     {
+        $storeId = CurrentCommerceStore::id();
+
+        $originQ = DB::table('productos')->where('idproducto', $productoId);
+        if ($storeId !== null && Schema::hasColumn('productos', 'commerce_store_id')) {
+            $originQ->where('commerce_store_id', $storeId);
+        }
+        if (! $originQ->exists()) {
+            return response()->json(['message' => 'Producto no encontrado'], 404);
+        }
+
         $sugerencias = DB::table('producto_sugerencias as ps')
             ->join('productos as p', 'ps.producto_sugerido_id', '=', 'p.idproducto')
             ->where('ps.producto_origen_id', $productoId)
             ->where('ps.activo', true)
+            ->when($storeId !== null && Schema::hasColumn('productos', 'commerce_store_id'), function ($q) use ($storeId) {
+                $q->where('p.commerce_store_id', $storeId);
+            })
             ->orderBy('ps.orden')
             ->select(
                 'p.idproducto',

@@ -17,16 +17,15 @@ class OrderTicketController extends Controller
         }
 
         $detalles = DB::table('detalle_venta')->where('idventa', $idventa)->get();
-        $observaciones = $venta->observaciones ?? '';
+        $productIds = $detalles->pluck('idproducto')->unique()->filter()->all();
+        $productosById = Producto::query()->whereIn('idproducto', $productIds)->get()->keyBy('idproducto');
+        $clienteInfo = $this->formatClienteInfo($venta);
 
-        // Extraer datos del cliente de observaciones
-        $clienteInfo = str_replace('Pago online - ', '', $observaciones);
-
-        $html = $this->renderTicket($venta, $detalles, $clienteInfo);
+        $html = $this->renderTicket($venta, $detalles, $clienteInfo, $productosById);
         return response($html)->header('Content-Type', 'text/html; charset=utf-8');
     }
 
-    private function renderTicket($venta, $detalles, $clienteInfo)
+    private function renderTicket($venta, $detalles, $clienteInfo, $productosById)
     {
         $fecha = $venta->fecha ? date('d/m/Y H:i', strtotime($venta->fecha)) : '-';
         $estado = strtoupper($venta->estado ?? 'PENDIENTE');
@@ -34,19 +33,28 @@ class OrderTicketController extends Controller
 
         $itemsHtml = '';
         $inventarioHtml = '';
+        $packagingHtml = '';
         $itemNum = 0;
+        $codigoRetiro = $venta->codigo_retiro ? strtoupper((string) $venta->codigo_retiro) : '—';
+        $fechaRetiro = $venta->fecha_retiro ? $venta->fecha_retiro->format('d/m/Y') : '—';
+        $empaqueLabel = $venta->packaging_label ? htmlspecialchars((string) $venta->packaging_label) : '—';
 
         foreach ($detalles as $detalle) {
+            $bundleConfig = null;
+            if (! empty($detalle->bundle_configuration)) {
+                $bundleConfig = json_decode($detalle->bundle_configuration, true);
+            }
+
+            if (is_array($bundleConfig) && ! empty($bundleConfig['is_packaging'])) {
+                $packagingHtml .= '<div class="inv-item">- 1x '.htmlspecialchars($venta->packaging_label ?? 'Empaque', ENT_QUOTES, 'UTF-8').'</div>';
+                continue;
+            }
+
             $itemNum++;
-            $producto = Producto::find($detalle->idproducto);
+            $producto = $productosById->get($detalle->idproducto);
             $nombre = $producto ? $producto->nombre : "Producto #{$detalle->idproducto}";
             $esPack = $producto && $producto->es_pack;
             $subtotal = number_format($detalle->subtotal ?? ($detalle->precio_unitario * $detalle->cantidad), 0, ',', '.');
-
-            $bundleConfig = null;
-            if (!empty($detalle->bundle_configuration)) {
-                $bundleConfig = json_decode($detalle->bundle_configuration, true);
-            }
 
             $itemsHtml .= "<div class='item'>";
             $itemsHtml .= "<div class='item-header'>ITEM {$itemNum}: " . strtoupper($nombre) . " x{$detalle->cantidad}</div>";
@@ -71,7 +79,8 @@ class OrderTicketController extends Controller
                 foreach ($bundleConfig['customization'] as $key => $value) {
                     if (empty($value)) continue;
                     $label = $this->fieldLabel($key);
-                    $itemsHtml .= "<div class='custom-field'>{$label}: \"{$value}\"</div>";
+                    $safeValue = htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+                    $itemsHtml .= "<div class='custom-field'>{$label}: \"{$safeValue}\"</div>";
                 }
             }
 
@@ -140,8 +149,11 @@ class OrderTicketController extends Controller
 
   <div class="info">
     <div><strong>CLIENTE:</strong> {$clienteInfo}</div>
-    <div><strong>FECHA:</strong> {$fecha}</div>
-    <div><strong>PAGO:</strong> {$venta->medio_pago}</div>
+    <div><strong>TEL:</strong> {$venta->cliente_telefono}</div>
+    <div><strong>RETIRO:</strong> {$fechaRetiro}</div>
+    <div><strong>C&Oacute;DIGO:</strong> <span style="font-size:18px;letter-spacing:3px">{$codigoRetiro}</span></div>
+    <div><strong>EMPAQUE:</strong> {$empaqueLabel}</div>
+    <div><strong>PAGO:</strong> {$venta->medio_pago} — {$fecha}</div>
   </div>
 
   <div class="separator"></div>
@@ -151,8 +163,13 @@ class OrderTicketController extends Controller
   <div class="separator"></div>
 
   <div class="inventory">
-    <h3>INVENTARIO A SACAR DE ESTANTER&Iacute;A:</h3>
+    <h3>PRODUCTOS (ESTANTER&Iacute;A):</h3>
     {$inventarioHtml}
+  </div>
+
+  <div class="inventory" style="background:#e8f4fd;border-color:#90caf9">
+    <h3>MATERIAL DE EMPAQUE:</h3>
+    {$packagingHtml}
   </div>
 
   <div class="total">TOTAL: <span>\${$total}</span></div>
@@ -188,4 +205,16 @@ HTML;
             default => strtoupper($key),
         };
     }
+
+    private function formatClienteInfo(Venta $venta): string
+    {
+        if ($venta->cliente_nombre) {
+            return htmlspecialchars((string) $venta->cliente_nombre, ENT_QUOTES, 'UTF-8');
+        }
+
+        $obs = (string) ($venta->observaciones ?? '');
+
+        return htmlspecialchars(trim(str_replace('Pago online - ', '', $obs)), ENT_QUOTES, 'UTF-8');
+    }
 }
+

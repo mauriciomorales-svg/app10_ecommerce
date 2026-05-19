@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductoResource\Pages;
+use App\Models\CommerceStore;
 use App\Models\Producto;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -19,6 +20,15 @@ class ProductoResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
+            Forms\Components\Section::make('Tienda (multi‑instancia)')->schema([
+                Forms\Components\Select::make('commerce_store_id')
+                    ->label('Tienda ecommerce')
+                    ->relationship('commerceStore', 'name')
+                    ->required()
+                    ->default(fn () => CommerceStore::query()->where('slug', config('commerce.default_store_slug', 'default'))->value('id'))
+                    ->searchable()
+                    ->preload(),
+            ]),
             Forms\Components\Section::make('Información Básica')->schema([
                 Forms\Components\TextInput::make('nombre')->required()->maxLength(100),
                 Forms\Components\TextInput::make('codigobarra')->label('Código de Barras')->maxLength(50),
@@ -61,6 +71,10 @@ class ProductoResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
+            Tables\Columns\TextColumn::make('commerceStore.name')
+                ->label('Tienda')
+                ->sortable()
+                ->toggleable(),
             Tables\Columns\ImageColumn::make('imagen')->circular()->defaultImageUrl(url('/default-product.png')),
             Tables\Columns\TextColumn::make('nombre')->searchable()->sortable()->limit(40),
             Tables\Columns\TextColumn::make('codigobarra')->label('Código')->searchable()->toggleable(),
