@@ -60,7 +60,10 @@ class MercadoPagoOnlineController extends Controller
             'mercadopago',
             $checkout['fulfillment_type'],
             $checkout['delivery'],
-            $checkout['totals']
+            $checkout['totals'],
+            $checkout['coupon_code'] ?? null,
+            (int) ($checkout['coupon_discount'] ?? 0),
+            $checkout['marketing'] ?? []
         );
         $packaging = $checkout['totals']['packaging'];
         $total = (float) $venta->total;

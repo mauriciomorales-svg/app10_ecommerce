@@ -12,13 +12,21 @@ use Filament\Tables\Table;
 
 class CategoryResource extends Resource
 {
-    protected static ?string $model = Category::class;
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    protected static bool $isDiscovered = false;
 
-    public static function form(Form $form): Form
+    protected static ?string $model = Category::class;
+
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-tag';
+
+    public static function canAccess(): bool
     {
-        return $form->schema([
-            Forms\Components\Section::make()->schema([
+        return false;
+    }
+
+    public static function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
+    {
+        return $schema->components([
+            \Filament\Schemas\Components\Section::make()->schema([
                 Forms\Components\TextInput::make('name')->required(),
                 Forms\Components\TextInput::make('slug')->required()->unique(ignoreRecord: true),
                 Forms\Components\Textarea::make('description'),

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\AddressGeocodeService;
 use App\Services\DeliveryQuoteService;
+use App\Services\RegaloPackDeliveryService;
 use Illuminate\Http\Request;
 
 class DeliveryCheckoutController extends Controller
@@ -14,12 +15,26 @@ class DeliveryCheckoutController extends Controller
         $validated = $request->validate([
             'lat' => 'required|numeric|between:-90,90',
             'lng' => 'required|numeric|between:-180,180',
+            'product_ids' => 'nullable|string|max:500',
         ]);
 
         $quote = DeliveryQuoteService::quote(
             (float) $validated['lat'],
             (float) $validated['lng']
         );
+
+        $productIds = array_values(array_filter(array_map(
+            'intval',
+            preg_split('/\s*,\s*/', (string) ($validated['product_ids'] ?? ''), -1, PREG_SPLIT_NO_EMPTY) ?: []
+        )));
+        if ($productIds !== [] && RegaloPackDeliveryService::productIdsQualifyForFreeDelivery($productIds)) {
+            $quote['amount'] = 0;
+            $quote['free_regalo_pack'] = true;
+            $quote['breakdown'] = array_merge(
+                (array) ($quote['breakdown'] ?? []),
+                ['label' => 'Envío incluido en pack regalo', 'final_clp' => 0]
+            );
+        }
 
         if (! $quote['within_radius']) {
             return response()->json([
@@ -39,6 +54,8 @@ class DeliveryCheckoutController extends Controller
     {
         $validated = $request->validate([
             'address' => 'required|string|min:5|max:400',
+            'product_ids' => 'nullable|array',
+            'product_ids.*' => 'integer|min:1',
         ]);
 
         $result = AddressGeocodeService::geocode($validated['address']);
@@ -50,6 +67,15 @@ class DeliveryCheckoutController extends Controller
         }
 
         $quote = DeliveryQuoteService::quote($result['lat'], $result['lng']);
+        $productIds = array_map('intval', (array) ($validated['product_ids'] ?? []));
+        if ($productIds !== [] && RegaloPackDeliveryService::productIdsQualifyForFreeDelivery($productIds)) {
+            $quote['amount'] = 0;
+            $quote['free_regalo_pack'] = true;
+            $quote['breakdown'] = array_merge(
+                (array) ($quote['breakdown'] ?? []),
+                ['label' => 'Envío incluido en pack regalo', 'final_clp' => 0]
+            );
+        }
 
         return response()->json([
             'success' => true,
@@ -78,6 +104,23 @@ class DeliveryCheckoutController extends Controller
                 'hint' => 'Desde $'.number_format((int) ($pricing['base_commune_clp'] ?? 2000), 0, ',', '.')
                     .' en la misma comuna (hasta '.number_format((float) ($pricing['included_km'] ?? 3), 1, ',', '.').' km)',
             ],
+            'renaico' => $this->renaicoMessaging(),
         ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function renaicoMessaging(): array
+    {
+        $cfg = (array) config('delivery_renaico', []);
+
+        return [
+            'activo' => (bool) ($cfg['activo'] ?? true),
+            'min_pedido_delivery_clp' => (int) ($cfg['min_pedido_delivery_clp'] ?? 12000),
+            'min_pedido_delivery_nota' => (string) ($cfg['min_pedido_delivery_nota'] ?? ''),
+            'ventanas' => (array) ($cfg['ventanas'] ?? []),
+            'retiro' => (array) ($cfg['retiro'] ?? []),
+        ];
     }
 }

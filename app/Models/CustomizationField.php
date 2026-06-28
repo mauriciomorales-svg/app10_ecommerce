@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\CustomizationFieldOptions;
 use Illuminate\Database\Eloquent\Model;
 
 class CustomizationField extends Model
@@ -29,5 +30,20 @@ class CustomizationField extends Model
     public function producto()
     {
         return $this->belongsTo(Producto::class, 'product_id', 'idproducto');
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (CustomizationField $field): void {
+            if ($field->field_type !== 'select') {
+                $field->options = null;
+
+                return;
+            }
+
+            $field->options = CustomizationFieldOptions::normalizeForStorage(
+                is_array($field->options) ? $field->options : null
+            );
+        });
     }
 }

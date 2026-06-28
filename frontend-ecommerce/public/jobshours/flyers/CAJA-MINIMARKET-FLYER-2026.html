@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>JobsHours · Caja minimarket · 2026</title>
+  <style>
+    :root { --blue:#2563eb; --blue-dark:#1e40af; --g:#00b870; --ink:#0f172a; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Segoe UI',system-ui,sans-serif; background:#64748b; print-color-adjust:exact; }
+    .flyer { width:1200px; height:675px; margin:12px auto; overflow:hidden; display:grid; grid-template-columns:1.1fr .9fr; box-shadow:0 12px 40px rgba(0,0,0,.2); }
+    .left { background:linear-gradient(160deg,var(--blue-dark),var(--blue)); color:#fff; padding:40px 36px; }
+    .left h1 { font-size:40px; font-weight:900; line-height:1.05; }
+    .left p { margin-top:14px; font-size:15px; font-weight:600; line-height:1.45; max-width:420px; }
+    .price { margin-top:24px; background:#fff; color:var(--ink); display:inline-block; padding:16px 24px; border-radius:14px; }
+    .price .a { font-size:32px; font-weight:900; color:var(--blue-dark); }
+    .price .b { font-size:11px; font-weight:700; color:#64748b; margin-top:4px; }
+    .right { background:url('https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=900&q=80') center/cover; position:relative; }
+    .right::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,transparent 40%,rgba(15,23,42,.85)); }
+    .tags { position:absolute; bottom:24px; left:20px; right:20px; z-index:1; display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+    .tags div { background:rgba(255,255,255,.95); border-radius:10px; padding:12px; font-size:10px; font-weight:800; color:var(--ink); text-align:center; }
+    .foot { position:absolute; bottom:0; left:0; right:0; grid-column:1/-1; background:var(--ink); color:#fff; padding:10px 36px; font-size:10px; font-weight:700; display:flex; justify-content:space-between; }
+  </style>
+</head>
+<body>
+  <article class="flyer" style="position:relative">
+    <div class="left">
+      <p style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;opacity:.9">Retail · barrio</p>
+      <h1>Caja minimarket</h1>
+      <p>Inventario, caja y lector de barras. Pensado para góndola — no para fila de comida en mostrador.</p>
+      <div class="price">
+        <div class="a">$19.990/mes</div>
+        <div class="b">Barra y stock · + IVA · lector lo compras tú</div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="tags">
+        <div>Inventario al día</div>
+        <div>Varios usuarios</div>
+        <div>Reportes caja</div>
+      </div>
+    </div>
+    <footer class="foot" style="position:absolute;width:100%">
+      <span>JobsHours</span>
+      <span>tienda.jobshours.com/minimarket</span>
+    </footer>
+  </article>
+</body>
+</html>

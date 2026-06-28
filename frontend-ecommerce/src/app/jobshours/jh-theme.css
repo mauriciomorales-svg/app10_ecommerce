@@ -1,0 +1,189 @@
+/* JobsHours tienda — estilo cálido tipo SolverMedia */
+.jh-store {
+  --jh-green: #00d084;
+  --jh-green-dark: #00b870;
+  --jh-green-soft: #e8faf3;
+  --jh-orange: #ff6b35;
+  --jh-orange-dark: #e85a28;
+  --jh-blue: #4a90e2;
+  --jh-blue-soft: #eef4fc;
+  --jh-ink: #0f172a;
+  --jh-muted: #475569;
+  --jh-muted-strong: #334155;
+  --jh-surface: #ffffff;
+  --jh-surface-alt: #f5f7fa;
+  --jh-shadow: 0 8px 30px rgba(26, 26, 26, 0.08);
+  color: var(--jh-ink);
+  background: var(--jh-surface);
+}
+
+/* Texto sobre fotos del hero */
+.jh-hero-text {
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.jh-dashed-frame {
+  border: 2px dashed var(--jh-green);
+  border-radius: 1rem;
+}
+
+.jh-dashed-frame-blue {
+  border: 2px dashed var(--jh-blue);
+  border-radius: 1rem;
+}
+
+.jh-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.jh-badge-green {
+  background: var(--jh-green-soft);
+  color: #047857;
+}
+
+.jh-badge-blue {
+  background: var(--jh-blue-soft);
+  color: #1d4ed8;
+}
+
+.jh-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  background: var(--jh-orange);
+  padding: 0.85rem 1.6rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(255, 107, 53, 0.35);
+  transition: transform 0.2s, background 0.2s;
+}
+
+.jh-btn-primary:hover {
+  background: var(--jh-orange-dark);
+  transform: translateY(-1px);
+}
+
+.jh-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  border: 2px solid #e2e8f0;
+  background: #fff;
+  padding: 0.82rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--jh-ink);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.jh-btn-secondary:hover {
+  border-color: var(--jh-green);
+  box-shadow: var(--jh-shadow);
+}
+
+.jh-card {
+  border-radius: 1.25rem;
+  background: #fff;
+  padding: 1.5rem;
+  box-shadow: var(--jh-shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.jh-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(26, 26, 26, 0.1);
+}
+
+.jh-section-title {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--jh-ink);
+}
+
+.jh-mockup-screen {
+  background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 25px 50px rgba(15, 23, 42, 0.25);
+}
+
+.jh-compare-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.jh-compare-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.jh-compare-table th,
+.jh-compare-table td {
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.jh-compare-table thead th {
+  background: #f8fafc;
+  font-weight: 800;
+  text-align: center;
+}
+
+.jh-compare-table tbody td:first-child,
+.jh-compare-table thead th:first-child {
+  text-align: left;
+  font-weight: 600;
+  color: var(--jh-ink);
+  position: sticky;
+  left: 0;
+  background: #fff;
+  z-index: 1;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.04);
+}
+
+.jh-compare-table thead th:first-child {
+  background: #f8fafc;
+}
+
+.jh-compare-table .col-highlight {
+  background: #fff7ed;
+  outline: 2px solid var(--jh-orange);
+  outline-offset: -2px;
+}
+
+.jh-compare-table .col-highlight-blue {
+  background: var(--jh-blue-soft);
+  outline: 2px solid var(--jh-blue);
+  outline-offset: -2px;
+}
+
+.jh-check-yes {
+  color: var(--jh-green-dark);
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.jh-check-no {
+  color: #cbd5e1;
+  font-weight: 700;
+}

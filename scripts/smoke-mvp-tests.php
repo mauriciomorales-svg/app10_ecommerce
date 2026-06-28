@@ -41,7 +41,7 @@ $paid = App\Models\Venta::whereRaw('LOWER(estado) = ?', ['pagado'])->orderByDesc
 if ($paid) {
     $url = App\Support\OrderTrackingUrl::signed((int) $paid->idventa, 3600);
     echo "INFO tracking_ejemplo={$url}\n";
-    $public = PickupFulfillmentService::ventaToPublicArray($paid);
+    $public = App\Services\PickupFulfillmentService::ventaToPublicArray($paid);
     check('tracking_url en API pública', ! empty($public['tracking_url']));
 } else {
     echo "WARN sin ventas pagadas — probar tracking tras una compra real\n";

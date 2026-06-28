@@ -13,7 +13,7 @@ echo "=== dondemorales deploy $(date -Is) branch=$BRANCH ==="
 
 cd "$APP_DIR"
 
-if [ -d .git ] && git remote get-url origin >/dev/null 2>&1; then
+if [ "${SKIP_GIT_RESET:-0}" != "1" ] && [ -d .git ] && git remote get-url origin >/dev/null 2>&1; then
   git fetch origin "$BRANCH" 2>/dev/null || git fetch origin 2>/dev/null || true
   git reset --hard "origin/$BRANCH" 2>/dev/null || git reset --hard "origin/master" 2>/dev/null || true
 else
@@ -23,7 +23,14 @@ fi
 composer install --no-dev --optimize-autoloader --no-interaction
 
 php artisan migrate --force
+php artisan db:seed --class=AdminRolesSeeder --force
+php scripts/seed-packs-reserva-mejoras.php --apply 2>/dev/null || true
 php artisan commerce:ensure-packaging-products
+php artisan jobshours:install-shop --force-bundles
+php artisan commerce:store-set-host jobshours tienda.jobshours.com 2>/dev/null || true
+php artisan commerce:sync-product-categories
+php artisan commerce:sync-cart-suggestions
+php artisan commerce:optimize-catalog
 php artisan config:clear
 php artisan route:clear
 php artisan view:clear
@@ -52,6 +59,11 @@ sleep 3
 curl -s -o /dev/null -w "api_up=%{http_code}\n" --max-time 10 http://127.0.0.1:8002/api/productos/categorias || true
 curl -s -o /dev/null -w "web_up=%{http_code}\n" --max-time 15 http://127.0.0.1:3001/ || true
 curl -s -o /dev/null -w "checkout_opts=%{http_code}\n" --max-time 10 "http://127.0.0.1:8002/api/checkout/options?subtotal=5000" || true
+curl -s -o /dev/null -w "jh_store=%{http_code}\n" --max-time 10 -H "Host: tienda.jobshours.com" http://127.0.0.1:8002/api/commerce/store || true
+
+bash "$APP_DIR/scripts/nginx-tienda-jobshours.sh" 2>/dev/null || echo "nginx tienda-jobshours: omitido o error (revisar DNS/SSL aparte)"
+
+cd "$APP_DIR" && php artisan jobshours:install-shop 2>/dev/null || true
 
 cd "$APP_DIR" && php artisan commerce:retry-jobshours-publish 2>/dev/null || true
 

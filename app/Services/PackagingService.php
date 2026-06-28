@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Producto;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use App\Support\CommerceStoreSettings;
 
 class PackagingService
 {
@@ -13,9 +14,12 @@ class PackagingService
      */
     public static function resolve(string $packagingKey, int $subtotalProductos): array
     {
-        $options = config('packaging.options', []);
+        $options = CommerceStoreSettings::packagingOptions();
+        if ($options === []) {
+            $options = config('packaging.options', []);
+        }
         if (! isset($options[$packagingKey])) {
-            $packagingKey = 'standard';
+            $packagingKey = array_key_first($options) ?? 'standard';
         }
 
         $opt = $options[$packagingKey];
@@ -66,8 +70,18 @@ class PackagingService
 
     public static function publicOptions(int $subtotalProductos = 0): array
     {
+        return self::publicOptionsForStore($subtotalProductos);
+    }
+
+    public static function publicOptionsForStore(int $subtotalProductos = 0): array
+    {
         $out = [];
-        foreach (config('packaging.options', []) as $key => $opt) {
+        $options = CommerceStoreSettings::packagingOptions();
+        if ($options === []) {
+            $options = config('packaging.options', []);
+        }
+
+        foreach ($options as $key => $opt) {
             $resolved = self::resolve($key, $subtotalProductos);
             $out[] = [
                 'key' => $key,

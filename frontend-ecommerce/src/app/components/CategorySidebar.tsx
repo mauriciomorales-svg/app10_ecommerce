@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Package, ChevronRight } from 'lucide-react';
+import { LayoutGrid, ChevronRight } from 'lucide-react';
 
 interface Categoria {
   idcategoria: number;
@@ -18,41 +18,45 @@ export default function CategorySidebar() {
 
   useEffect(() => {
     fetch('/api/productos/categorias')
-      .then(res => res.ok ? res.json() : { data: [] })
-      .then(data => setCategorias(data.data || data || []))
+      .then((res) => (res.ok ? res.json() : { data: [] }))
+      .then((data) => setCategorias(data.data || data || []))
       .catch(() => setCategorias([]));
   }, []);
 
   const setCategoria = (id: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (id) {
-      params.set('categoria', id);
-    } else {
-      params.delete('categoria');
-    }
-    router.push(`/?${params.toString()}`);
+    if (id) params.set('categoria', id);
+    else params.delete('categoria');
+    router.push(`/?${params.toString()}#catalogo`);
   };
 
   const setOrden = (orden: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set('orden', orden);
-    router.push(`/?${params.toString()}`);
+    router.push(`/?${params.toString()}#catalogo`);
   };
 
+  const activeClass =
+    'bg-brand-primary text-white shadow-md shadow-brand-primary/20';
+  const idleClass = 'text-brand-muted hover:bg-brand-surface hover:text-brand-ink';
+
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden sticky top-20">
-      <div className="bg-gradient-to-r from-[#166534] to-[#16a34a] p-5">
-        <h3 className="font-bold text-white flex items-center gap-2">
-          <Package className="h-5 w-5 text-emerald-200" />
+    <div className="bg-white rounded-2xl shadow-card border border-slate-100 overflow-hidden sticky top-24">
+      <div className="bg-brand-primary p-5">
+        <h3 className="font-display font-bold text-white flex items-center gap-2">
+          <LayoutGrid className="h-5 w-5 text-brand-accent" />
           Categorías
         </h3>
       </div>
 
-      <div className="p-4 max-h-[60vh] overflow-y-auto">
-        <div className="space-y-1">
+      <div className="p-3 max-h-[60vh] overflow-y-auto">
+        <div className="space-y-0.5">
           <button
+            type="button"
             onClick={() => setCategoria('')}
-            className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${!categoriaActiva ? 'bg-[#16a34a] text-white shadow-md shadow-emerald-500/20' : 'text-gray-600 hover:bg-gray-50'}`}
+            className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              !categoriaActiva ? activeClass : idleClass
+            }`}
           >
             <span>Todas</span>
             <ChevronRight className="h-4 w-4 opacity-50" />
@@ -60,22 +64,27 @@ export default function CategorySidebar() {
           {categorias.map((cat) => (
             <button
               key={cat.idcategoria}
+              type="button"
               onClick={() => setCategoria(cat.idcategoria.toString())}
-              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${categoriaActiva === cat.idcategoria.toString() ? 'bg-[#16a34a] text-white shadow-md shadow-emerald-500/20' : 'text-gray-600 hover:bg-gray-50'}`}
+              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition-all text-left ${
+                categoriaActiva === cat.idcategoria.toString() ? activeClass : idleClass
+              }`}
             >
-              <span>{cat.nombre}</span>
-              <ChevronRight className="h-4 w-4 opacity-50" />
+              <span className="truncate pr-2">{cat.nombre}</span>
+              <ChevronRight className="h-4 w-4 opacity-50 shrink-0" />
             </button>
           ))}
         </div>
       </div>
 
-      <div className="border-t border-gray-100 p-4">
-        <h4 className="font-semibold text-xs uppercase text-gray-400 tracking-wider mb-3">Ordenar por</h4>
+      <div className="border-t border-slate-100 p-4">
+        <h4 className="font-semibold text-xs uppercase text-brand-muted tracking-wider mb-3">
+          Ordenar por
+        </h4>
         <select
           value={ordenActivo}
           onChange={(e) => setOrden(e.target.value)}
-          className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 focus:ring-2 focus:ring-[#16a34a]/20 focus:border-[#16a34a] outline-none transition-all"
+          className="w-full px-4 py-2.5 bg-brand-surface border border-slate-200 rounded-xl text-sm text-brand-ink focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none"
         >
           <option value="nuevos">Más nuevos</option>
           <option value="precio_menor">Precio: menor a mayor</option>
@@ -86,4 +95,3 @@ export default function CategorySidebar() {
     </div>
   );
 }
-

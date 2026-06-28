@@ -1,0 +1,617 @@
+/* DondeMorales Admin — tema moderno */
+:root {
+    --dm-brand: #0d9488;
+    --dm-brand-dark: #0f766e;
+    --dm-sidebar: #0f172a;
+    --dm-sidebar-hover: #1e293b;
+    --dm-accent: #14b8a6;
+    --dm-surface: #f8fafc;
+    --dm-radius: 14px;
+    --dm-shadow: 0 4px 24px -4px rgb(15 23 42 / 0.08);
+}
+
+/* Sidebar oscuro premium */
+.fi-sidebar {
+    background: linear-gradient(180deg, var(--dm-sidebar) 0%, #020617 100%) !important;
+    border-right: 1px solid rgb(255 255 255 / 0.06) !important;
+}
+
+.fi-sidebar-header {
+    border-bottom: 1px solid rgb(255 255 255 / 0.06) !important;
+}
+
+.fi-sidebar-item-btn {
+    border-radius: 10px !important;
+    margin-inline: 0.5rem;
+}
+
+.fi-sidebar-item-btn:hover,
+.fi-sidebar-item-active .fi-sidebar-item-btn {
+    background: rgb(255 255 255 / 0.08) !important;
+}
+
+.fi-sidebar-group-label {
+    color: rgb(148 163 184) !important;
+    font-size: 0.7rem !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+}
+
+.fi-logo {
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+}
+
+/* Topbar limpio */
+.fi-topbar {
+    backdrop-filter: blur(12px);
+    background: rgb(255 255 255 / 0.85) !important;
+    border-bottom: 1px solid rgb(226 232 240 / 0.8) !important;
+    box-shadow: var(--dm-shadow);
+}
+
+.dark .fi-topbar {
+    background: rgb(15 23 42 / 0.9) !important;
+}
+
+/* Contenido principal */
+.fi-main {
+    background: var(--dm-surface) !important;
+}
+
+.dark .fi-main {
+    background: #0b1120 !important;
+}
+
+/* Cards / secciones */
+.fi-section,
+.fi-wi-stats-overview-stat {
+    border-radius: var(--dm-radius) !important;
+    box-shadow: var(--dm-shadow) !important;
+    border: 1px solid rgb(226 232 240 / 0.6) !important;
+}
+
+.fi-wi-stats-overview-stat {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fi-wi-stats-overview-stat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px -6px rgb(13 148 136 / 0.15) !important;
+}
+
+/* Tablas */
+.fi-ta-table {
+    border-radius: var(--dm-radius) !important;
+    overflow: hidden;
+}
+
+.fi-ta-header-cell {
+    background: rgb(241 245 249) !important;
+    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+}
+
+.dark .fi-ta-header-cell {
+    background: rgb(30 41 59) !important;
+}
+
+/* Botones primarios */
+.fi-btn-primary {
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+}
+
+/* Login */
+.fi-simple-layout {
+    background: linear-gradient(135deg, #0f172a 0%, #134e4a 50%, #0f766e 100%) !important;
+}
+
+.fi-simple-main {
+    border-radius: 20px !important;
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.35) !important;
+}
+
+.fi-simple-main-ctn {
+    max-width: 420px !important;
+}
+
+/* Paginación Filament legacy */
+.fi-pagination-item-btn {
+    border-radius: 8px !important;
+}
+
+/* Listado productos — paginación estilo tienda (HTTP, sin Livewire) */
+.dm-productos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.dm-productos-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.dm-productos-search {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.875rem;
+}
+
+.dm-productos-select {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    background: #fff;
+}
+
+.dm-productos-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #334155;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.dm-productos-btn-primary {
+    background: #0d9488;
+    border-color: #0d9488;
+    color: #fff;
+}
+
+.dm-productos-summary {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.dm-productos-table-wrap {
+    overflow-x: auto;
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid rgb(226 232 240 / 0.6);
+    box-shadow: 0 4px 24px -4px rgb(15 23 42 / 0.08);
+}
+
+.dm-productos-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.dm-productos-table th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    background: #f1f5f9;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #475569;
+    font-weight: 600;
+}
+
+.dm-productos-table td {
+    padding: 0.65rem 1rem;
+    border-top: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.dm-productos-table tbody tr:nth-child(even) {
+    background: #fafafa;
+}
+
+.dm-productos-photo-cell {
+    width: 96px;
+}
+
+.dm-productos-thumb-frame {
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+}
+
+.dm-productos-thumb {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    object-position: center;
+    padding: 6px;
+    border-radius: 12px;
+    background: linear-gradient(145deg, #f8fafc, #f1f5f9);
+    border: 1px solid #e2e8f0;
+    display: block;
+}
+
+/* Placeholders estilo tienda (ProductImagePlaceholder.tsx) */
+.dm-productos-thumb-placeholder {
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    border: 1px solid rgb(226 232 240 / 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.dm-ph-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 0.5rem;
+    background: rgb(255 255 255 / 0.75);
+    box-shadow: 0 4px 12px rgb(15 23 42 / 0.08);
+}
+
+.dm-ph-label {
+    font-size: 0.55rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgb(13 148 136 / 0.75);
+    position: relative;
+    z-index: 1;
+}
+
+.dm-ph-toppis {
+    background: linear-gradient(145deg, rgb(34 211 238 / 0.35), rgb(16 185 129 / 0.25), rgb(6 78 59 / 0.35));
+}
+
+.dm-ph-regalos {
+    background: linear-gradient(145deg, rgb(251 113 133 / 0.35), rgb(217 70 239 / 0.25), rgb(76 29 149 / 0.35));
+}
+
+.dm-ph-salada {
+    background: linear-gradient(145deg, rgb(251 191 36 / 0.35), rgb(249 115 22 / 0.25), rgb(127 29 29 / 0.3));
+}
+
+.dm-ph-pack {
+    background: linear-gradient(145deg, rgb(252 211 77 / 0.35), rgb(251 146 60 / 0.2), rgb(13 148 136 / 0.3));
+}
+
+.dm-ph-retail {
+    background: linear-gradient(145deg, rgb(226 232 240 / 0.85), rgb(209 250 229 / 0.45), rgb(240 253 250 / 0.85));
+}
+
+.dm-productos-name {
+    font-weight: 600;
+    color: #0f172a;
+    max-width: 280px;
+}
+
+.dm-productos-link {
+    color: #0d9488;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.dm-productos-link:hover {
+    text-decoration: underline;
+}
+
+.dm-productos-empty {
+    text-align: center;
+    padding: 2rem !important;
+    color: #94a3b8;
+}
+
+.dm-badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.dm-badge-ok {
+    background: #d1fae5;
+    color: #047857;
+}
+
+.dm-badge-off {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* Paginación igual que dondemorales.cl (ProductGrid) */
+.dm-store-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0 1rem;
+}
+
+.dm-store-pagination-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #0d9488;
+}
+
+.dm-store-pagination-next {
+    background: #0d9488;
+    border-color: #0d9488;
+    color: #fff;
+}
+
+.dm-store-pagination-btn.is-disabled {
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.dm-store-pagination-info {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* Formularios */
+.fi-fo-field-wrp-label {
+    font-weight: 600 !important;
+}
+
+/* Panel de foto del producto (formularios fuera del form Filament) */
+.dm-photo-panel {
+    width: 100%;
+}
+
+.dm-photo-panel-layout {
+    display: grid;
+    grid-template-columns: minmax(140px, 220px) 1fr;
+    gap: 1.25rem;
+    align-items: start;
+}
+
+@media (max-width: 640px) {
+    .dm-photo-panel-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.dm-photo-panel-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.dm-photo-search-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.dm-photo-google-link,
+.dm-photo-suggestions-btn {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 0.45rem 0.85rem;
+    cursor: pointer;
+    text-decoration: none;
+    border: 1px solid #99f6e4;
+    background: #f0fdfa;
+    color: #0f766e;
+}
+
+.dm-photo-suggestions-btn {
+    background: #fff;
+}
+
+.dm-photo-suggestions-btn-muted {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #475569;
+}
+
+.dm-photo-google-link:hover,
+.dm-photo-suggestions-btn:hover {
+    background: #ccfbf1;
+}
+
+.dm-photo-suggestions {
+    padding: 0.65rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.dm-photo-suggestions-hint {
+    margin: 0 0 0.5rem;
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.dm-photo-suggestions-empty {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.dm-photo-suggestions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+    gap: 0.5rem;
+}
+
+.dm-photo-suggestion-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    align-items: stretch;
+}
+
+.dm-photo-suggestion-card img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+}
+
+.dm-photo-suggestion-use {
+    padding: 0.25rem 0.35rem;
+    border: none;
+    border-radius: 8px;
+    background: #0d9488;
+    color: #fff;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.dm-photo-suggestion-use:hover {
+    background: #0f766e;
+}
+
+.dm-photo-suggestion-use:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.dm-photo-panel-previews {
+    position: relative;
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+    border-radius: 14px;
+    background: linear-gradient(145deg, #f8fafc, #f1f5f9);
+    border: 1px solid #e2e8f0;
+}
+
+.dm-photo-panel-img {
+    max-height: 180px;
+    max-width: 100%;
+    border-radius: 10px;
+    object-fit: contain;
+    transition: opacity 0.2s ease;
+}
+
+.dm-photo-panel-img.is-dimmed {
+    opacity: 0.25;
+}
+
+.dm-photo-panel-img-new {
+    position: absolute;
+    inset: 0.75rem;
+    margin: auto;
+    box-shadow: 0 8px 32px rgb(13 148 136 / 0.25);
+    border: 2px solid #0d9488;
+}
+
+.dm-photo-panel-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 120px;
+    color: #94a3b8;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.dm-photo-panel-new-label {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #0d9488;
+}
+
+.dm-photo-delete-form {
+    margin: 0;
+    padding-top: 0.25rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.dm-photo-remove-btn {
+    padding: 0;
+    border: none;
+    background: none;
+    color: #b45309;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    align-self: flex-start;
+}
+
+.dm-photo-remove-btn:hover {
+    color: #92400e;
+}
+
+/* Subida de foto — formulario HTTP */
+.dm-photo-upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.dm-photo-upload-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1rem;
+    border: 2px dashed #99f6e4;
+    border-radius: 14px;
+    background: linear-gradient(145deg, #f0fdfa, #f8fafc);
+    cursor: pointer;
+}
+
+.dm-photo-upload-picker-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #0f766e;
+}
+
+.dm-photo-upload-picker-hint {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.dm-photo-upload-input {
+    margin-top: 0.35rem;
+    font-size: 0.8125rem;
+}
+
+.dm-photo-upload-submit {
+    align-self: flex-start;
+    padding: 0.6rem 1.25rem;
+    border: none;
+    border-radius: 12px;
+    background: #0d9488;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.dm-photo-upload-submit:hover {
+    background: #0f766e;
+}

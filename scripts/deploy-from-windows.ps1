@@ -71,8 +71,8 @@ $deployScript = Join-Path $PSScriptRoot "deploy-on-server.sh"
 $body = ([System.IO.File]::ReadAllText($deployScript) -replace "`r", "").TrimEnd() + "`n"
 Write-Host "Ejecutando deploy en servidor..."
 if (Test-Path "$env:USERPROFILE\.ssh\config") {
-  $body | ssh -F $env:USERPROFILE\.ssh\config -o ConnectTimeout=60 $target "tr -d '\r' | bash -s"
+  $body | ssh -F $env:USERPROFILE\.ssh\config -o ConnectTimeout=60 $target "SKIP_GIT_RESET=1 tr -d '\r' | bash -s"
 } else {
-  $body | ssh -o ConnectTimeout=60 $target "tr -d '\r' | bash -s"
+  $body | ssh -o ConnectTimeout=60 $target "SKIP_GIT_RESET=1 tr -d '\r' | bash -s"
 }
 Write-Host "Deploy DondeMorales finalizado."

@@ -8,13 +8,6 @@ interface Categoria {
   nombre: string;
 }
 
-const QUICK = [
-  { emoji: '🥤', query: 'bebida' },
-  { emoji: '🍿', query: 'snack' },
-  { emoji: '🧴', query: 'limpieza' },
-  { emoji: '🥛', query: 'leche' },
-];
-
 export default function MobileCategoryStrip() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -32,15 +25,12 @@ export default function MobileCategoryStrip() {
     const params = new URLSearchParams(searchParams.toString());
     if (id) params.set('categoria', id);
     else params.delete('categoria');
+    params.delete('buscar');
     router.push(`/?${params.toString()}#catalogo`);
   };
 
-  const goBuscar = (q: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('buscar', q);
-    params.delete('categoria');
-    router.push(`/?${params.toString()}#catalogo`);
-  };
+  const active = 'bg-brand-primary text-white border-brand-primary';
+  const idle = 'bg-white border-slate-200 text-brand-ink';
 
   return (
     <div className="lg:hidden mb-3">
@@ -48,33 +38,19 @@ export default function MobileCategoryStrip() {
         <button
           type="button"
           onClick={() => goCategoria('')}
-          className={`shrink-0 px-3 py-2 rounded-lg text-xs font-semibold border ${
-            !categoriaActiva && !searchParams.get('buscar')
-              ? 'bg-[#16a34a] text-white border-[#16a34a]'
-              : 'bg-white border-gray-200 text-gray-700'
+          className={`shrink-0 min-h-[44px] px-3 py-2.5 rounded-xl text-xs font-bold border ${
+            !categoriaActiva && !searchParams.get('buscar') ? active : idle
           }`}
         >
           Todos
         </button>
-        {QUICK.map((q) => (
-          <button
-            key={q.query}
-            type="button"
-            onClick={() => goBuscar(q.query)}
-            className="shrink-0 px-3 py-2 rounded-lg text-xs font-semibold bg-white border border-gray-200"
-          >
-            {q.emoji} {q.query}
-          </button>
-        ))}
-        {categorias.slice(0, 12).map((cat) => (
+        {categorias.slice(0, 14).map((cat) => (
           <button
             key={cat.idcategoria}
             type="button"
             onClick={() => goCategoria(String(cat.idcategoria))}
-            className={`shrink-0 px-3 py-2 rounded-lg text-xs font-semibold border whitespace-nowrap ${
-              categoriaActiva === String(cat.idcategoria)
-                ? 'bg-[#16a34a] text-white border-[#16a34a]'
-                : 'bg-white border-gray-200 text-gray-700'
+            className={`shrink-0 min-h-[44px] px-3 py-2.5 rounded-xl text-xs font-semibold border whitespace-nowrap ${
+              categoriaActiva === String(cat.idcategoria) ? active : idle
             }`}
           >
             {cat.nombre}

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#134e4a"/>
+    </linearGradient>
+    <linearGradient id="cup" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ecfdf5"/>
+      <stop offset="100%" stop-color="#99f6e4"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="480" fill="url(#bg)"/>
+  <ellipse cx="240" cy="390" rx="130" ry="18" fill="#000" opacity="0.2"/>
+  <path d="M155 150h170l-16 205c-4 26-26 44-69 44s-65-18-69-44L155 150z" fill="url(#cup)" stroke="#14b8a6" stroke-width="3"/>
+  <ellipse cx="240" cy="150" rx="85" ry="20" fill="#f0fdfa" stroke="#2dd4bf" stroke-width="3"/>
+  <circle cx="212" cy="210" r="12" fill="#4ade80"/>
+  <circle cx="248" cy="198" r="11" fill="#22c55e"/>
+  <circle cx="270" cy="218" r="9" fill="#86efac"/>
+  <text x="240" y="88" text-anchor="middle" fill="#99f6e4" font-family="system-ui,sans-serif" font-size="12" font-weight="700" letter-spacing="2">FIT FRESH POWER</text>
+</svg>

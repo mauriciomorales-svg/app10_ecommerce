@@ -4,6 +4,8 @@ namespace App\Support;
 
 use App\Services\CheckoutPriceService;
 use App\Services\CheckoutTotalsService;
+use App\Services\ValeDescuentoService;
+use App\Support\MarketingAttribution;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -30,13 +32,24 @@ class CheckoutRequestValidator
             'packaging_key' => 'required|string|in:'.implode(',', array_keys(config('packaging.options', []))),
             'fulfillment_type' => 'required|string|in:pickup,delivery',
             'total' => 'required|numeric|min:1',
+            'coupon_code' => 'nullable|string|max:50',
+            'marketing' => 'nullable|array',
+            'marketing.utm_source' => 'nullable|string|max:64',
+            'marketing.utm_medium' => 'nullable|string|max:64',
+            'marketing.utm_campaign' => 'nullable|string|max:128',
+            'marketing.referrer' => 'nullable|string|max:512',
+            'marketing.landing_path' => 'nullable|string|max:255',
         ];
 
         $fulfillmentPreview = $request->input('fulfillment_type', 'pickup');
-        if ($fulfillmentPreview === 'pickup') {
+        $digitalService = (CommerceStoreSettings::checkout()['fulfillment_mode'] ?? '') === 'digital_service';
+        if ($fulfillmentPreview === 'pickup' && ! $digitalService) {
             $rules['cliente.fecha_retiro'] = 'required|date|after_or_equal:today';
         } else {
             $rules['cliente.fecha_retiro'] = 'nullable|date|after_or_equal:today';
+        }
+
+        if ($fulfillmentPreview === 'delivery') {
             $rules['delivery'] = 'required|array';
             $rules['delivery.address'] = 'required|string|max:500';
             $rules['delivery.lat'] = 'required|numeric|between:-90,90';
@@ -50,12 +63,32 @@ class CheckoutRequestValidator
         $items = CheckoutPriceService::resolveCartItems($validated['items']);
         $delivery = $fulfillmentType === 'delivery' ? $validated['delivery'] : null;
 
+        $couponDiscount = 0;
+        $couponCode = trim((string) ($validated['coupon_code'] ?? ''));
+        $couponMeta = null;
+        if ($couponCode !== '') {
+            $subtotalPreview = CheckoutPriceService::sumResolved($items);
+            $couponMeta = ValeDescuentoService::validate(
+                $couponCode,
+                $subtotalPreview,
+                (string) ($validated['cliente']['email'] ?? ''),
+                (string) ($validated['cliente']['telefono'] ?? '')
+            );
+            if (! ($couponMeta['valid'] ?? false)) {
+                throw ValidationException::withMessages([
+                    'coupon_code' => [$couponMeta['message'] ?? 'Cupón no válido'],
+                ]);
+            }
+            $couponDiscount = (int) ($couponMeta['discount'] ?? 0);
+        }
+
         try {
             $totals = CheckoutTotalsService::compute(
                 $items,
                 $validated['packaging_key'],
                 $fulfillmentType,
-                $delivery
+                $delivery,
+                $couponDiscount
             );
         } catch (\InvalidArgumentException $e) {
             throw ValidationException::withMessages([
@@ -76,6 +109,10 @@ class CheckoutRequestValidator
             'fulfillment_type' => $fulfillmentType,
             'delivery' => $delivery,
             'totals' => $totals,
+            'coupon_code' => $couponMeta['codigo'] ?? null,
+            'coupon_discount' => $couponDiscount,
+            'coupon_label' => $couponMeta['label'] ?? null,
+            'marketing' => MarketingAttribution::fromRequest($request),
         ];
     }
 

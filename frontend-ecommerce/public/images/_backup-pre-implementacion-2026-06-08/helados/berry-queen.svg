@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a21caf"/>
+      <stop offset="100%" stop-color="#701a75"/>
+    </linearGradient>
+    <linearGradient id="cup" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fdf4ff"/>
+      <stop offset="100%" stop-color="#f5d0fe"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="480" fill="url(#bg)"/>
+  <ellipse cx="240" cy="390" rx="130" ry="18" fill="#000" opacity="0.22"/>
+  <path d="M155 150h170l-16 205c-4 26-26 44-69 44s-65-18-69-44L155 150z" fill="url(#cup)" stroke="#d946ef" stroke-width="3"/>
+  <ellipse cx="240" cy="150" rx="85" ry="20" fill="#fdf4ff" stroke="#e879f9" stroke-width="3"/>
+  <circle cx="208" cy="212" r="12" fill="#e11d48"/>
+  <circle cx="240" cy="198" r="11" fill="#db2777"/>
+  <circle cx="272" cy="214" r="10" fill="#f472b6"/>
+  <ellipse cx="248" cy="238" rx="16" ry="8" fill="#fef08a"/>
+  <text x="240" y="88" text-anchor="middle" fill="#f5d0fe" font-family="system-ui,sans-serif" font-size="12" font-weight="700" letter-spacing="2">BERRY QUEEN</text>
+</svg>

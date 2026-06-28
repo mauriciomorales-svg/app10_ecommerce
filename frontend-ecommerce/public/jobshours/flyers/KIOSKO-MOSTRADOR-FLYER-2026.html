@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>JobsHours · Kiosko mostrador · Flyer 2026</title>
+  <style>
+    :root {
+      --g: #00b870;
+      --g-dark: #00995f;
+      --g-soft: #e8faf3;
+      --blue: #1e3a5f;
+      --blue-light: #2563eb;
+      --o: #e85d04;
+      --ink: #0f172a;
+      --white: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #64748b;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    /* Formato banner horizontal (como flyer original) */
+    .flyer {
+      width: 1200px;
+      height: 675px;
+      margin: 12px auto;
+      position: relative;
+      overflow: hidden;
+      background: var(--blue);
+      color: var(--white);
+      box-shadow: 0 12px 40px rgba(0,0,0,.25);
+    }
+    .bg {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(105deg, rgba(15,23,42,.92) 0%, rgba(15,23,42,.75) 42%, rgba(15,23,42,.35) 100%),
+        url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1400&q=80') center/cover;
+    }
+    .top {
+      position: relative; z-index: 2;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 22px 32px 0;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--white); color: var(--g-dark);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 18px;
+    }
+    .brand-text strong { display: block; font-size: 20px; letter-spacing: -.02em; }
+    .brand-text span { font-size: 11px; opacity: .9; font-weight: 600; }
+    .pill {
+      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25);
+      padding: 8px 16px; border-radius: 999px; font-size: 11px; font-weight: 800;
+      letter-spacing: .06em; text-transform: uppercase;
+    }
+    .main {
+      position: relative; z-index: 2;
+      display: grid; grid-template-columns: 1.05fr .95fr;
+      gap: 24px; padding: 28px 32px 20px;
+      height: calc(100% - 170px);
+    }
+    .copy h1 {
+      font-size: 44px; line-height: 1.05; font-weight: 900; letter-spacing: -.03em;
+      text-shadow: 0 2px 16px rgba(0,0,0,.5);
+    }
+    .copy h1 em { color: #6ee7b7; font-style: normal; }
+    .copy .sub {
+      margin-top: 14px; max-width: 480px;
+      font-size: 15px; line-height: 1.45; font-weight: 600;
+      color: rgba(255,255,255,.95);
+      text-shadow: 0 1px 8px rgba(0,0,0,.6);
+    }
+    .copy .chip {
+      display: inline-block; margin-top: 16px;
+      background: rgba(0,184,112,.25); border: 1px solid rgba(110,231,183,.5);
+      padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700;
+    }
+    .visual {
+      display: flex; align-items: flex-end; justify-content: center; gap: 12px;
+    }
+    .device {
+      background: rgba(255,255,255,.95); border-radius: 16px; padding: 10px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.35);
+      color: var(--ink); text-align: center;
+    }
+    .device.tablet { width: 220px; }
+    .device.point { width: 120px; padding: 14px 10px; }
+    .device .screen {
+      background: var(--g-soft); border-radius: 10px; padding: 12px 8px;
+      font-size: 9px; font-weight: 800; color: var(--g-dark);
+    }
+    .device .mini { font-size: 8px; color: #64748b; margin-top: 6px; font-weight: 600; }
+    .sign {
+      margin-top: 8px; background: var(--blue-light); color: white;
+      font-size: 7px; font-weight: 800; padding: 8px; border-radius: 8px; line-height: 1.3;
+    }
+    .benefits {
+      position: relative; z-index: 2;
+      display: grid; grid-template-columns: repeat(3,1fr);
+      background: var(--white); color: var(--ink);
+      margin: 0 32px; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,.2);
+    }
+    .benefits div {
+      padding: 14px 16px; text-align: center; font-size: 12px; font-weight: 800;
+      border-right: 1px solid #e2e8f0;
+    }
+    .benefits div:last-child { border-right: none; }
+    .benefits span { display: block; font-size: 10px; font-weight: 600; color: #64748b; margin-top: 2px; }
+    .pricing {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
+      display: grid; grid-template-columns: 1.1fr 1fr 1fr;
+      background: rgba(15,23,42,.97);
+      border-top: 3px solid var(--g);
+    }
+    .price-box {
+      padding: 14px 20px; border-right: 1px solid rgba(255,255,255,.1);
+    }
+    .price-box:last-child { border-right: none; }
+    .price-box.highlight { background: var(--g); color: var(--ink); }
+    .price-box .label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; opacity: .85; }
+    .price-box .amount { font-size: 22px; font-weight: 900; margin-top: 2px; }
+    .price-box .detail { font-size: 9px; font-weight: 600; margin-top: 4px; line-height: 1.35; opacity: .9; }
+    .foot {
+      position: absolute; bottom: 72px; left: 32px; z-index: 3;
+      font-size: 10px; font-weight: 700; color: rgba(255,255,255,.9);
+      text-shadow: 0 1px 4px rgba(0,0,0,.5);
+    }
+    @media print {
+      body { background: #fff; }
+      .flyer { margin: 0; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <article class="flyer">
+    <div class="bg" aria-hidden="true"></div>
+
+    <header class="top">
+      <div class="brand">
+        <div class="logo">JH</div>
+        <div class="brand-text">
+          <strong>JobsHours</strong>
+          <span>Tiendas Inteligentes</span>
+        </div>
+      </div>
+      <div class="pill">Kiosko mostrador · Comida con fila</div>
+    </header>
+
+    <div class="main">
+      <div class="copy">
+        <h1>Tu cliente pide y paga solo.<br><em>Tú te quedas en la cocina.</em></h1>
+        <p class="sub">
+          Tablet o PC en mostrador + Mercado Pago. El cliente elige, paga con tarjeta o QR
+          y el pedido va directo a cocina — sin fila en caja.
+        </p>
+        <p class="chip">¿Ya tienes PC o tablet? La adaptamos nosotros.</p>
+      </div>
+      <div class="visual">
+        <div class="device tablet">
+          <div class="screen">MENÚ EN PANTALLA<br>Cliente elige y paga</div>
+          <div class="mini">Tablet de pedidos</div>
+        </div>
+        <div class="device point">
+          <div class="screen">POINT<br>Listo para cobrar</div>
+          <div class="mini">Maquinita aparte</div>
+          <div class="sign">PIDE Y PAGA AQUÍ · PEDIDO A COCINA</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="benefits">
+      <div>Sin fila en caja<span>Cliente se atiende solo</span></div>
+      <div>Menos WhatsApp<span>Pedido claro en pantalla</span></div>
+      <div>Más orden<span>MP + menú + enseñanza</span></div>
+    </div>
+
+    <p class="foot">tienda.jobshours.com · WhatsApp +56 9 6513 3289 · Araucanía</p>
+
+    <footer class="pricing">
+      <div class="price-box highlight">
+        <div class="label">Recomendado · hacer caja hoy</div>
+        <div class="amount">$109.990</div>
+        <div class="detail">Te lo dejamos andando · Instalación $80.000 + mes 1 $29.990</div>
+      </div>
+      <div class="price-box">
+        <div class="label">Programa mensual</div>
+        <div class="amount">$29.990/mes</div>
+        <div class="detail">Menos filas · Soporte Lun–Sáb · + IVA</div>
+      </div>
+      <div class="price-box">
+        <div class="label">Cobro con tarjeta</div>
+        <div class="amount">Point aparte</div>
+        <div class="detail">Maquinita Mercado Pago no incluida · te orientamos o cotizamos entrega</div>
+      </div>
+    </footer>
+  </article>
+</body>
+</html>

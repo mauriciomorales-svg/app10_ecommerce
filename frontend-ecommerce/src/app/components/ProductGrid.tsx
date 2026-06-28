@@ -2,13 +2,37 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Search, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
-import Link from 'next/link';
+import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import ProductCard, { ProductCardItem } from './ProductCard';
 import ProductBuilderModal from './ProductBuilderModal';
-import { useCart } from '../context/CartContext';
+import SearchEmptyState from './SearchEmptyState';
+import { useCartFeedback } from '../hooks/useCartFeedback';
+import { resolveCartStock } from '../lib/cartHelpers';
+import { getCommerceSessionId } from '../lib/commerceEvents';
+import type { SearchScope } from '../lib/searchScope';
+import { SEARCH_SCOPE_META } from '../lib/searchScope';
+import { useRouter } from 'next/navigation';
 
-export default function ProductGrid() {
+type ProductGridProps = {
+  /** Fija categoría sin depender de ?categoria= en la URL (p. ej. página /helados) */
+  categoriaOverride?: string;
+  /** En /helados: solo padres TOPPI-PARENT/COMBO/YOGEN (no sabores sueltos) */
+  soloExperiencia?: boolean;
+  /** Búsqueda fija (p. ej. guía porciones en /salada) */
+  buscarOverride?: string;
+  /** Alcance experiencia: regalos | salada | helados | packs */
+  alcanceOverride?: string;
+  searchScope?: SearchScope;
+};
+
+export default function ProductGrid({
+  categoriaOverride,
+  soloExperiencia = false,
+  buscarOverride,
+  alcanceOverride,
+  searchScope = 'home',
+}: ProductGridProps) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [productos, setProductos] = useState<ProductCardItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,10 +40,11 @@ export default function ProductGrid() {
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [builderProductId, setBuilderProductId] = useState<number | null>(null);
-  const { addToCart } = useCart();
+  const { addWithFeedback } = useCartFeedback();
 
-  const buscar = searchParams.get('buscar') || '';
-  const categoria = searchParams.get('categoria') || '';
+  const buscar =
+    buscarOverride ?? (searchParams.get('buscar') || searchParams.get('q') || '');
+  const categoria = categoriaOverride ?? searchParams.get('categoria') ?? '';
   const orden = searchParams.get('orden') || '';
 
   useEffect(() => {
@@ -32,7 +57,15 @@ export default function ProductGrid() {
       let url = `/api/productos?page=${page}`;
       if (buscar) url += `&buscar=${encodeURIComponent(buscar)}`;
       if (categoria) url += `&categoria=${categoria}`;
+      if (alcanceOverride) url += `&alcance=${encodeURIComponent(alcanceOverride)}`;
+      if (soloExperiencia) url += '&experiencia=1';
       if (orden) url += `&orden=${orden}`;
+      if (buscar) {
+        url += `&session_id=${encodeURIComponent(getCommerceSessionId())}`;
+        if (typeof window !== 'undefined') {
+          url += `&page_path=${encodeURIComponent(window.location.pathname)}`;
+        }
+      }
 
       const res = await fetch(url);
       if (!res.ok) throw new Error('Error');
@@ -46,7 +79,7 @@ export default function ProductGrid() {
     } finally {
       setLoading(false);
     }
-  }, [buscar, categoria, orden, page]);
+  }, [buscar, categoria, orden, page, soloExperiencia, alcanceOverride]);
 
   useEffect(() => {
     fetchProductos();
@@ -55,7 +88,7 @@ export default function ProductGrid() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-16">
-        <Loader2 className="h-8 w-8 text-[#16a34a] animate-spin mb-3" />
+        <Loader2 className="h-8 w-8 text-brand-primary animate-spin mb-3" />
         <p className="text-gray-400 text-sm">Cargando productos...</p>
       </div>
     );
@@ -67,7 +100,7 @@ export default function ProductGrid() {
         <p className="text-sm text-gray-500">
           {buscar ? (
             <>
-              Resultados para <span className="font-semibold text-[#16a34a]">&ldquo;{buscar}&rdquo;</span>
+              Resultados para <span className="font-semibold text-brand-primary">&ldquo;{buscar}&rdquo;</span>
             </>
           ) : (
             'Catálogo'
@@ -78,14 +111,20 @@ export default function ProductGrid() {
       </div>
 
       {productos.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-lg border border-gray-200">
-          <Search className="h-12 w-12 text-gray-200 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-gray-500 mb-1">No hay productos</h3>
-          <p className="text-gray-400 text-sm mb-4">Prueba otra búsqueda o categoría</p>
-          <Link href="/" className="btn-primary inline-block text-sm py-2 px-4">
-            Ver todo
-          </Link>
-        </div>
+        <SearchEmptyState
+          query={buscar}
+          scope={searchScope}
+          onTryTerm={
+            buscar
+              ? (term) => {
+                  const meta = SEARCH_SCOPE_META[searchScope];
+                  router.push(
+                    `${meta.targetPath}?buscar=${encodeURIComponent(term)}#${meta.hash}`,
+                  );
+                }
+              : undefined
+          }
+        />
       ) : (
         <div className="retail-shelf">
           {productos.map((producto) => (
@@ -103,15 +142,17 @@ export default function ProductGrid() {
           productId={builderProductId}
           onClose={() => setBuilderProductId(null)}
           onAddToCart={(item) => {
-            addToCart({
+            addWithFeedback({
               idproducto: item.idproducto,
               nombre: item.nombre,
               precio_venta: item.precio_venta,
               imagen: item.imagen || null,
-              stock: 99,
+              stock: resolveCartStock(1, item.bundle_configuration),
+              pack_includes: item.pack_includes,
               bundle_configuration: item.bundle_configuration,
               idcategoria: item.idcategoria ?? null,
             });
+            setBuilderProductId(null);
           }}
         />
       )}
@@ -125,7 +166,7 @@ export default function ProductGrid() {
               document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
             }}
             disabled={page <= 1}
-            className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-30 bg-white border border-gray-200 text-[#16a34a]"
+            className="flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-bold disabled:opacity-30 bg-white border border-slate-200 text-brand-primary"
           >
             <ChevronLeft className="h-4 w-4" /> Ant.
           </button>
@@ -139,7 +180,7 @@ export default function ProductGrid() {
               document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
             }}
             disabled={page >= lastPage}
-            className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-30 bg-[#16a34a] text-white"
+            className="flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-bold disabled:opacity-30 bg-brand-primary text-white"
           >
             Sig. <ChevronRight className="h-4 w-4" />
           </button>

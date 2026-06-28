@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>JobsHours · Planes feria 2026 (mensaje honesto)</title>
+  <style>
+    :root {
+      --g: #00b870;
+      --g-dark: #00995f;
+      --g-soft: #e8faf3;
+      --blue: #1e3a5f;
+      --blue-mid: #2563eb;
+      --o: #e85d04;
+      --ink: #0f172a;
+      --muted: #475569;
+      --white: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #94a3b8;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .flyer {
+      width: 800px;
+      margin: 16px auto;
+      background: var(--white);
+      color: var(--ink);
+      box-shadow: 0 16px 48px rgba(0,0,0,.2);
+      overflow: hidden;
+    }
+    .head {
+      background: linear-gradient(135deg, var(--blue) 0%, #0f172a 100%);
+      color: var(--white);
+      padding: 28px 32px 22px;
+      text-align: center;
+    }
+    .head .logo-row {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      margin-bottom: 12px;
+    }
+    .logo {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: var(--white); color: var(--g-dark);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 20px;
+    }
+    .head h1 {
+      font-size: 28px; font-weight: 900; letter-spacing: -.02em; line-height: 1.1;
+    }
+    .head h1 em { color: #6ee7b7; font-style: normal; display: block; font-size: 22px; margin-top: 6px; }
+    .head .sub { margin-top: 10px; font-size: 13px; font-weight: 600; opacity: .92; max-width: 620px; margin-left: auto; margin-right: auto; line-height: 1.4; }
+    .chips {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+      background: var(--g-soft); border-bottom: 3px solid var(--g);
+    }
+    .chips div {
+      padding: 14px 12px; text-align: center;
+      border-right: 1px solid #cbd5e1;
+    }
+    .chips div:last-child { border-right: none; }
+    .chips strong { display: block; font-size: 13px; color: var(--g-dark); }
+    .chips span { font-size: 10px; font-weight: 600; color: var(--muted); margin-top: 3px; display: block; }
+    .devices {
+      padding: 20px 28px;
+      background: linear-gradient(180deg, #f8fafc 0%, #fff 100%);
+      display: flex; align-items: flex-end; justify-content: center; gap: 16px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .dev {
+      text-align: center; font-size: 9px; font-weight: 700; color: var(--muted);
+    }
+    .dev .box {
+      border-radius: 12px; background: var(--white); border: 2px solid #e2e8f0;
+      box-shadow: 0 8px 20px rgba(0,0,0,.08); padding: 10px; margin-bottom: 6px;
+    }
+    .dev.laptop .box { width: 140px; height: 88px; background: #e2e8f0; }
+    .dev.tablet .box {
+      width: 100px; height: 130px; background: var(--g-soft);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8px; color: var(--g-dark); font-weight: 800; line-height: 1.3;
+    }
+    .dev.point .box {
+      width: 72px; height: 110px; background: #fef08a;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8px; font-weight: 900; color: #854d0e;
+    }
+    .strip {
+      background: var(--blue-mid);
+      color: var(--white);
+      padding: 12px 24px;
+      text-align: center;
+      font-size: 12px; font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .strip small { display: block; font-size: 10px; font-weight: 600; opacity: .9; margin-top: 4px; text-transform: none; letter-spacing: 0; }
+    .entry-banner {
+      background: var(--o);
+      color: var(--white);
+      padding: 10px 24px;
+      text-align: center;
+      font-size: 11px; font-weight: 800;
+    }
+    .plans {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .plan {
+      padding: 18px 14px 16px;
+      border-right: 1px solid #e2e8f0;
+      display: flex; flex-direction: column;
+      min-height: 280px;
+    }
+    .plan:last-child { border-right: none; }
+    .plan.featured {
+      background: linear-gradient(180deg, #fff 0%, var(--g-soft) 100%);
+      box-shadow: inset 0 0 0 3px var(--g);
+    }
+    .plan .tier {
+      font-size: 9px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .06em; color: var(--muted);
+    }
+    .plan.featured .tier { color: var(--g-dark); }
+    .plan h2 {
+      font-size: 15px; font-weight: 900; margin-top: 6px; line-height: 1.2;
+      color: var(--blue);
+    }
+    .plan .desc {
+      font-size: 10px; font-weight: 600; color: var(--muted);
+      line-height: 1.45; margin-top: 8px; flex: 1;
+    }
+    .plan .price-bar {
+      margin-top: 12px;
+      background: var(--g);
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .plan.secondary .price-bar {
+      background: #e2e8f0;
+      color: var(--ink);
+    }
+    .plan .price-bar .amt { font-size: 20px; font-weight: 900; }
+    .plan .price-bar .per { font-size: 9px; font-weight: 700; margin-top: 2px; }
+    .plan .note {
+      font-size: 8px; font-weight: 700; color: var(--muted);
+      margin-top: 8px; text-align: center; line-height: 1.35;
+    }
+    .andando {
+      background: var(--ink);
+      color: var(--white);
+      padding: 16px 24px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+    .andando .big { font-size: 22px; font-weight: 900; color: #6ee7b7; }
+    .andando .detail { font-size: 10px; font-weight: 600; line-height: 1.45; opacity: .92; }
+    .foot {
+      padding: 18px 24px 22px;
+      background: var(--g-soft);
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 16px;
+      align-items: center;
+      border-top: 3px solid var(--g);
+    }
+    .foot img.qr { width: 100px; height: 100px; border-radius: 8px; }
+    .foot .contact strong { font-size: 14px; color: var(--g-dark); display: block; }
+    .foot .contact a { font-size: 13px; font-weight: 800; color: var(--blue); text-decoration: none; }
+    .foot .contact p { font-size: 10px; font-weight: 600; color: var(--muted); margin-top: 6px; line-height: 1.45; }
+    .foot .badge {
+      margin-top: 8px;
+      display: inline-block;
+      background: var(--g);
+      color: var(--ink);
+      font-size: 10px; font-weight: 800;
+      padding: 6px 12px; border-radius: 999px;
+    }
+    @media print {
+      body { background: #fff; }
+      .flyer { margin: 0; box-shadow: none; width: 100%; max-width: 800px; }
+    }
+  </style>
+</head>
+<body>
+  <article class="flyer">
+    <header class="head">
+      <div class="logo-row">
+        <div class="logo">JH</div>
+        <div>
+          <div style="font-size:18px;font-weight:900;">JobsHours</div>
+          <div style="font-size:11px;font-weight:600;opacity:.85;">Tiendas Inteligentes · Araucanía</div>
+        </div>
+      </div>
+      <h1>Tu cliente pide y paga solo.<em>Tú te quedas en la cocina.</em></h1>
+      <p class="sub">Empezamos con <strong>tablet de pedidos + Mercado Pago</strong> en tu local. Planes superiores suman WhatsApp automático y tienda web cuando tu negocio esté listo.</p>
+    </header>
+
+    <div class="chips">
+      <div><strong>Más ventas</strong><span>Pedido claro en pantalla</span></div>
+      <div><strong>Menos fila</strong><span>Cliente se atiende solo</span></div>
+      <div><strong>Más tiempo</strong><span>Vos en cocina o góndola</span></div>
+    </div>
+
+    <div class="devices" aria-hidden="true">
+      <div class="dev laptop"><div class="box"></div>PC en mostrador</div>
+      <div class="dev tablet"><div class="box">MENÚ<br>PIDE<br>Y PAGA</div>Tablet pedidos</div>
+      <div class="dev point"><div class="box">POINT<br>MP</div>Maquinita aparte</div>
+    </div>
+
+    <div class="strip">
+      Adaptamos tu PC, tablet o maquinita Mercado Pago
+      <small>Sin instalaciones raras · Wi‑Fi en el local · Soporte Lun–Sáb 09:00–21:00</small>
+    </div>
+
+    <p class="entry-banner">▼ EMPIEZA AQUÍ — Lo que instalamos en la primera semana (plan Menos filas)</p>
+
+    <section class="plans">
+      <div class="plan featured">
+        <p class="tier">Plan 1 · Menos filas · JH-01</p>
+        <h2>Tablet de pedidos + Mercado Pago</h2>
+        <p class="desc">
+          El cliente elige en pantalla, paga con tarjeta o QR y el pedido va a cocina.
+          Vos contestás WhatsApp cuando podés — <strong>atención humana</strong>, no bot mágico el día 1.
+        </p>
+        <div class="price-bar">
+          <div class="amt">$29.990</div>
+          <div class="per">/mes + IVA</div>
+        </div>
+        <p class="note">Instalación + mes 1: <strong>$109.990</strong> «Te lo dejamos andando»</p>
+      </div>
+
+      <div class="plan secondary">
+        <p class="tier">Plan 2 · Menos WhatsApp · JH-02</p>
+        <h2>+ Respuestas automáticas en WhatsApp</h2>
+        <p class="desc">
+          Incluye todo el Plan 1. Para locales con muchos mensajes en hora punta.
+          Activación según tu número y Meta — <strong>no prometemos 24/7 el primer día</strong>.
+        </p>
+        <div class="price-bar">
+          <div class="amt">$44.990</div>
+          <div class="per">/mes + IVA</div>
+        </div>
+        <p class="note">Upgrade cuando el Plan 1 ya funciona</p>
+      </div>
+
+      <div class="plan secondary">
+        <p class="tier">Plan 3 · También en web · JH-03</p>
+        <h2>+ Tienda online con mismo stock</h2>
+        <p class="desc">
+          Incluye planes anteriores. Vender por internet con el mismo inventario del local.
+          Proyecto piloto — lo cotizamos con calma.
+        </p>
+        <div class="price-bar">
+          <div class="amt">$59.990</div>
+          <div class="per">/mes + IVA</div>
+        </div>
+        <p class="note">Para local mixto comida + góndola</p>
+      </div>
+    </section>
+
+    <div class="andando">
+      <div>
+        <div class="big">¡Te lo dejamos andando en 7 días!</div>
+        <p class="detail" style="margin-top:6px;">Menú, Mercado Pago, enseñanza ~30 min. La maquinita Point va aparte si aún no la tienes.</p>
+      </div>
+      <div class="detail" style="text-align:right;">
+        Pack Express tablet + instalación: <strong style="color:#6ee7b7;">$199.990</strong><br>
+        tienda.jobshours.com
+      </div>
+    </div>
+
+    <footer class="foot">
+      <img
+        class="qr"
+        src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data=https%3A%2F%2Fwa.me%2F56965133289%3Ftext%3DHola%2C%20quiero%20info%20JobsHours"
+        width="100"
+        height="100"
+        alt="QR WhatsApp JobsHours"
+      />
+      <div class="contact">
+        <strong>¿Dudas? Escríbenos (atención manual)</strong>
+        <a href="https://wa.me/56965133289?text=Hola%2C%20quiero%20info%20JobsHours">WhatsApp +56 9 6513 3289</a>
+        <p>
+          <a href="https://tienda.jobshours.com/" style="color:var(--blue);font-weight:800;">tienda.jobshours.com</a><br>
+          Lun–Sáb 09:00–21:00 · Araucanía, Chile
+        </p>
+        <span class="badge">Impreso 2026 · Mensaje alineado a web y entrega JH-01</span>
+      </div>
+    </footer>
+  </article>
+</body>
+</html>

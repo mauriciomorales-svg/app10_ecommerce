@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\VentaEstado;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -53,6 +54,11 @@ class Venta extends Model
         'jobshours_payment_status',
         'jobshours_status_synced_at',
         'delivery_notified_at',
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'referrer',
+        'landing_path',
     ];
 
     protected $casts = [
@@ -84,6 +90,11 @@ class Venta extends Model
 
     public function scopeActivo($query)
     {
-        return $query->where('estado', 'activo');
+        return VentaEstado::scopePaid($query);
+    }
+
+    public function scopePagada($query)
+    {
+        return VentaEstado::scopePaid($query);
     }
 }

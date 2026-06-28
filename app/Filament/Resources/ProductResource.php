@@ -28,9 +28,11 @@ use Filament\Tables\Actions\DeleteBulkAction;
 
 class ProductResource extends Resource
 {
+    protected static bool $isDiscovered = false;
+
     protected static ?string $model = Product::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-shopping-bag';
 
     protected static ?string $navigationLabel = 'Productos';
 
@@ -38,11 +40,15 @@ class ProductResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Productos';
 
-    public static function form(Form $form): Form
+    public static function canAccess(): bool
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make('Información Básica')
+        return false;
+    }
+
+    public static function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
+    {
+        return $schema->components([
+                Section::make('Información Básica')
                     ->schema([
                         TextInput::make('name')
                             ->label('Nombre')

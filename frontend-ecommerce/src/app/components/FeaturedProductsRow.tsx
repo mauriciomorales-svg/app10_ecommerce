@@ -4,18 +4,26 @@ import { useEffect, useState } from 'react';
 import { Flame, Loader2 } from 'lucide-react';
 import ProductCard, { ProductCardItem } from './ProductCard';
 import ProductBuilderModal from './ProductBuilderModal';
-import { useCart } from '../context/CartContext';
+import { useCartFeedback } from '../hooks/useCartFeedback';
+import ExperienceSectionFallback from './ExperienceSectionFallback';
+import { resolveCartStock } from '../lib/cartHelpers';
 import { toCLP } from '../lib/money';
 
 export default function FeaturedProductsRow() {
   const [products, setProducts] = useState<ProductCardItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [builderProductId, setBuilderProductId] = useState<number | null>(null);
-  const { addToCart } = useCart();
+  const { addWithFeedback } = useCartFeedback();
 
-  useEffect(() => {
+  const loadData = () => {
+    setLoading(true);
+    setFetchError(false);
     fetch('/api/productos/destacados')
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error('fetch failed');
+        return r.json();
+      })
       .then((data) => {
         const list = Array.isArray(data) ? data : [];
         setProducts(
@@ -27,43 +35,60 @@ export default function FeaturedProductsRow() {
             stock_disponible: (p.stock_disponible ?? p.stock_actual ?? 0) as number,
             es_pack: Boolean(p.es_pack),
             has_bundle_options: Boolean(p.has_bundle_options),
+            has_customization: Boolean(p.has_customization),
             imagen_url: p.imagen_url as string | undefined,
             categorias: p.categorias as ProductCardItem['categorias'],
-          }))
+          })),
         );
       })
-      .catch(() => setProducts([]))
+      .catch(() => {
+        setProducts([]);
+        setFetchError(true);
+      })
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
 
-  if (loading) {
+  if (loading || fetchError || products.length === 0) {
     return (
-      <div className="flex justify-center py-6">
-        <Loader2 className="h-6 w-6 text-[#16a34a] animate-spin" />
-      </div>
+      <section className="mx-auto max-w-7xl px-3 py-4 sm:px-4">
+        <ExperienceSectionFallback
+          loading={loading}
+          error={fetchError}
+          empty={!loading && !fetchError && products.length === 0}
+          emptyMessage="Los destacados se actualizarán pronto."
+          onRetry={loadData}
+        />
+      </section>
     );
   }
 
-  if (products.length === 0) return null;
-
   return (
-    <section className="max-w-7xl mx-auto px-4 py-4">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-base font-bold text-[#1a1a2e] flex items-center gap-2">
-          <Flame className="h-5 w-5 text-amber-500" />
-          Lo más vendido
-        </h2>
-        <a href="#catalogo" className="text-xs font-semibold text-[#16a34a] hover:underline">
-          Ver todo
+    <section className="mx-auto max-w-7xl px-3 py-4 sm:px-4">
+      <div className="mb-4 flex items-end justify-between gap-3">
+        <div>
+          <span className="premium-kicker mb-1 block">Tendencia en Renaico</span>
+          <h2 className="font-display flex items-center gap-2 text-lg font-extrabold text-brand-ink sm:text-xl">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-accent/25 to-amber-100 shadow-inner-soft">
+              <Flame className="h-4 w-4 text-brand-accent" />
+            </span>
+            Lo más vendido
+          </h2>
+        </div>
+        <a
+          href="#catalogo"
+          className="shrink-0 rounded-full border border-brand-primary/20 bg-white/80 px-3 py-1.5 text-xs font-bold text-brand-primary shadow-sm transition hover:border-brand-primary hover:shadow-md"
+        >
+          Ver todo →
         </a>
       </div>
-      <div className="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory -mx-1 px-1">
+      <div className="premium-scroll-fade -mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-2">
         {products.map((p) => (
-          <div key={p.idproducto} className="w-[140px] sm:w-[155px] shrink-0 snap-start">
-            <ProductCard
-              producto={p}
-              onOpenBuilder={() => setBuilderProductId(p.idproducto)}
-            />
+          <div key={p.idproducto} className="w-[min(42vw,180px)] sm:w-[200px] shrink-0 snap-start">
+            <ProductCard producto={p} onOpenBuilder={() => setBuilderProductId(p.idproducto)} />
           </div>
         ))}
       </div>
@@ -73,15 +98,17 @@ export default function FeaturedProductsRow() {
           productId={builderProductId}
           onClose={() => setBuilderProductId(null)}
           onAddToCart={(item) => {
-            addToCart({
+            addWithFeedback({
               idproducto: item.idproducto,
               nombre: item.nombre,
               precio_venta: item.precio_venta,
               imagen: item.imagen || null,
-              stock: 99,
+              stock: resolveCartStock(1, item.bundle_configuration),
+              pack_includes: item.pack_includes,
               bundle_configuration: item.bundle_configuration,
               idcategoria: item.idcategoria ?? null,
             });
+            setBuilderProductId(null);
           }}
         />
       )}

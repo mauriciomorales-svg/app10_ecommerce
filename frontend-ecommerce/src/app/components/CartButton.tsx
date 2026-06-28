@@ -2,22 +2,26 @@
 
 import { useCart } from '../context/CartContext';
 import Link from 'next/link';
+import { ShoppingCart } from 'lucide-react';
 
 export default function CartButton() {
-  const { count, total } = useCart();
+  const { count, total, hydrated } = useCart();
+  const displayCount = hydrated ? count : 0;
 
   return (
-    <Link href="/cart" className="relative flex items-center gap-2 px-4 py-2 bg-[#16a34a] text-white rounded-xl hover:bg-[#15803d] transition-all shadow-md shadow-emerald-500/20">
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-      </svg>
-      <span className="font-medium">${total.toLocaleString('es-CL')}</span>
-      {count > 0 && (
-        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-          {count}
+    <Link
+      href="/cart"
+      className="relative flex items-center gap-2 px-3 sm:px-4 py-2 bg-brand-primary text-white rounded-xl hover:bg-brand-primary-hover transition-all shadow-md shadow-brand-primary/20"
+    >
+      <ShoppingCart className="h-5 w-5" />
+      <span className="font-semibold text-sm tabular-nums hidden sm:inline">
+        ${total.toLocaleString('es-CL')}
+      </span>
+      {displayCount > 0 && (
+        <span className="absolute -top-2 -right-2 bg-brand-accent text-brand-ink text-xs rounded-full h-5 min-w-[20px] px-1 flex items-center justify-center font-bold">
+          {displayCount}
         </span>
       )}
     </Link>
   );
 }
-

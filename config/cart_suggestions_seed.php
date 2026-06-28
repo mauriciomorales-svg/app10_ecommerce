@@ -1,0 +1,66 @@
+<?php
+
+/**
+ * Pares curados (prioridad) + sync automático vía commerce:sync-cart-suggestions.
+ * IDs validados contra catálogo producción Renaico (mayo 2026).
+ */
+return [
+    'exclude_product_ids' => [1909, 1910, 1911, 1912, 1961, 1962, 1963, 1964],
+
+    'fixed_pairs' => [
+        ['origen' => 1878, 'sugerido' => 1882, 'mensaje' => '¿Snack para tu Coca?', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1878, 'sugerido' => 1928, 'mensaje' => '¿Galletas para acompañar?', 'tipo' => 'complemento', 'orden' => 2],
+        ['origen' => 1886, 'sugerido' => 1799, 'mensaje' => '¿Algo dulce con la cerveza?', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1886, 'sugerido' => 1928, 'mensaje' => 'Snacks para el picoteo', 'tipo' => 'complemento', 'orden' => 2],
+        ['origen' => 1886, 'sugerido' => 1748, 'mensaje' => '¿Encendedor?', 'tipo' => 'complemento', 'orden' => 3],
+        ['origen' => 1880, 'sugerido' => 1879, 'mensaje' => 'Pan para el desayuno', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1880, 'sugerido' => 1926, 'mensaje' => 'Manjar para las tostadas', 'tipo' => 'complemento', 'orden' => 2],
+        ['origen' => 1880, 'sugerido' => 1920, 'mensaje' => 'Hallulla fresca', 'tipo' => 'complemento', 'orden' => 3],
+        ['origen' => 1879, 'sugerido' => 1880, 'mensaje' => '¿Leche para el pan?', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1879, 'sugerido' => 1926, 'mensaje' => 'Manjar o mermelada', 'tipo' => 'complemento', 'orden' => 2],
+        ['origen' => 1879, 'sugerido' => 1927, 'mensaje' => 'Nutella para untar', 'tipo' => 'complemento', 'orden' => 3],
+        ['origen' => 1920, 'sugerido' => 1926, 'mensaje' => 'Manjar para la hallulla', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1920, 'sugerido' => 1880, 'mensaje' => '¿Leche?', 'tipo' => 'complemento', 'orden' => 2],
+        ['origen' => 1921, 'sugerido' => 1926, 'mensaje' => 'Manjar para la marraqueta', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1921, 'sugerido' => 1880, 'mensaje' => '¿Leche?', 'tipo' => 'complemento', 'orden' => 2],
+        ['origen' => 1881, 'sugerido' => 1883, 'mensaje' => 'Aceite para cocinar', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1881, 'sugerido' => 1885, 'mensaje' => '¿Fideos también?', 'tipo' => 'complemento', 'orden' => 2],
+        ['origen' => 1884, 'sugerido' => 1926, 'mensaje' => 'Dulce para la once con mate', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1884, 'sugerido' => 1799, 'mensaje' => 'Galleta para el mate', 'tipo' => 'complemento', 'orden' => 2],
+        ['origen' => 1430, 'sugerido' => 1799, 'mensaje' => 'Snack rápido', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1430, 'sugerido' => 1928, 'mensaje' => '¿Galletas?', 'tipo' => 'complemento', 'orden' => 2],
+        ['origen' => 1349, 'sugerido' => 1928, 'mensaje' => '¿Algo para picar?', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1914, 'sugerido' => 1928, 'mensaje' => 'Galletas con el jugo', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1914, 'sugerido' => 1882, 'mensaje' => '¿Oreo?', 'tipo' => 'complemento', 'orden' => 2],
+        ['origen' => 1929, 'sugerido' => 1879, 'mensaje' => 'Pan para el queso', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1929, 'sugerido' => 1920, 'mensaje' => 'Hallulla fresca', 'tipo' => 'complemento', 'orden' => 2],
+        ['origen' => 1915, 'sugerido' => 1916, 'mensaje' => 'Palta para el huevo', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1915, 'sugerido' => 1879, 'mensaje' => 'Pan para el desayuno', 'tipo' => 'complemento', 'orden' => 2],
+        ['origen' => 1799, 'sugerido' => 1914, 'mensaje' => '¿Jugo o bebida?', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1882, 'sugerido' => 1878, 'mensaje' => '¿Bebida para las Oreo?', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1883, 'sugerido' => 1881, 'mensaje' => 'Arroz para acompañar', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1885, 'sugerido' => 1883, 'mensaje' => 'Aceite para los fideos', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1885, 'sugerido' => 1881, 'mensaje' => '¿Arroz?', 'tipo' => 'complemento', 'orden' => 2],
+        ['origen' => 1927, 'sugerido' => 1879, 'mensaje' => 'Pan para la Nutella', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1926, 'sugerido' => 1879, 'mensaje' => 'Pan para el manjar', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1922, 'sugerido' => 1923, 'mensaje' => '¿Verduras para la ensalada?', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 1923, 'sugerido' => 1922, 'mensaje' => '¿Frutas frescas?', 'tipo' => 'complemento', 'orden' => 1],
+        ['origen' => 761, 'sugerido' => 1841, 'mensaje' => 'Complemento higiene', 'tipo' => 'complemento', 'orden' => 1],
+    ],
+
+    'pattern_pairs' => [
+        ['origen' => '%chorrillana%', 'sugerido' => '%cerveza%', 'mensaje' => '¿Cerveza para compartir?', 'tipo' => 'complemento'],
+        ['origen' => '%chorrillana%', 'sugerido' => '%jugo%', 'mensaje' => '¿Jugo natural?', 'tipo' => 'complemento'],
+        ['origen' => '%chorrillana%', 'sugerido' => '%coca%', 'mensaje' => '¿Bebida fría?', 'tipo' => 'complemento'],
+        ['origen' => '%salchipapa%', 'sugerido' => '%jugo%', 'mensaje' => '¿Jugo o bebida?', 'tipo' => 'complemento'],
+        ['origen' => '%salchipapa%', 'sugerido' => '%coca%', 'mensaje' => '¿Bebida para las salchipapas?', 'tipo' => 'complemento'],
+        ['origen' => '%completo%', 'sugerido' => '%jugo%', 'mensaje' => '¿Jugo natural?', 'tipo' => 'complemento'],
+        ['origen' => '%helado%', 'sugerido' => '%jugo%', 'mensaje' => '¿Algo para tomar?', 'tipo' => 'complemento'],
+        ['origen' => '%coca cola%', 'sugerido' => '%oreo%', 'mensaje' => '¿Snack con tu bebida?', 'tipo' => 'complemento'],
+        ['origen' => '%cerveza%', 'sugerido' => '%gallet%', 'mensaje' => 'Picoteo', 'tipo' => 'complemento'],
+        ['origen' => '%leche%', 'sugerido' => '%pan%', 'mensaje' => 'Desayuno completo', 'tipo' => 'complemento'],
+        ['origen' => '%arroz%', 'sugerido' => '%aceite%', 'mensaje' => 'Para cocinar', 'tipo' => 'complemento'],
+        ['origen' => '%yerba%', 'sugerido' => '%manjar%', 'mensaje' => 'Once con mate', 'tipo' => 'complemento'],
+        ['origen' => '%queso%', 'sugerido' => '%pan%', 'mensaje' => 'Pan para el queso', 'tipo' => 'complemento'],
+    ],
+];

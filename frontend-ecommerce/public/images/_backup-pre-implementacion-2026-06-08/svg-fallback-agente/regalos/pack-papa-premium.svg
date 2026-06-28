@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 520" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#451a03"/>
+      <stop offset="50%" stop-color="#1c1917"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fde68a"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="35%" r="50%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="480" height="520" fill="url(#bg)"/>
+  <rect width="480" height="520" fill="url(#glow)"/>
+  <rect x="24" y="24" width="432" height="472" rx="28" stroke="url(#gold)" stroke-width="3.5" fill="none" opacity="0.7"/>
+  <rect x="40" y="40" width="400" height="440" rx="20" stroke="#fbbf24" stroke-width="1" fill="none" opacity="0.2"/>
+  <!-- balloon -->
+  <ellipse cx="240" cy="130" rx="42" ry="52" fill="#1d4ed8" stroke="#93c5fd" stroke-width="2"/>
+  <path d="M240 182v36" stroke="#94a3b8" stroke-width="2"/>
+  <path d="M228 218c8 6 16 6 24 0" stroke="#94a3b8" stroke-width="2" fill="none"/>
+  <!-- gift box -->
+  <rect x="125" y="210" width="230" height="155" rx="14" fill="#292524" stroke="#a8a29e" stroke-width="2"/>
+  <rect x="233" y="188" width="26" height="177" fill="url(#gold)"/>
+  <rect x="115" y="272" width="250" height="20" fill="url(#gold)"/>
+  <rect x="160" y="235" width="70" height="55" rx="8" fill="#0c0a09" stroke="#57534e" stroke-width="1.5"/>
+  <rect x="250" y="235" width="70" height="55" rx="8" fill="#0c0a09" stroke="#57534e" stroke-width="1.5"/>
+  <!-- ferrero -->
+  <circle cx="108" cy="330" r="28" fill="#78350f" stroke="#fbbf24" stroke-width="2"/>
+  <circle cx="100" cy="322" r="6" fill="#fde68a" opacity="0.8"/>
+  <circle cx="116" cy="338" r="5" fill="#fde68a" opacity="0.7"/>
+  <!-- muffin -->
+  <ellipse cx="372" cy="340" rx="32" ry="22" fill="#92400e"/>
+  <ellipse cx="372" cy="332" rx="24" ry="14" fill="#d97706"/>
+  <text x="240" y="108" text-anchor="middle" fill="#fde68a" font-family="system-ui,sans-serif" font-size="12" font-weight="700" letter-spacing="2.5">MÁS VENDIDO | 19 JUN</text>
+  <text x="240" y="468" text-anchor="middle" fill="#fef3c7" font-family="system-ui,sans-serif" font-size="22" font-weight="800">Papá Premium</text>
+  <text x="240" y="494" text-anchor="middle" fill="#a8a29e" font-family="system-ui,sans-serif" font-size="13">Ferrero + globo + postre</text>
+</svg>

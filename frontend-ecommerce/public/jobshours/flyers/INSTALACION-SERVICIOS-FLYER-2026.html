@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>JobsHours · Instalación y servicios · 2026</title>
+  <style>
+    :root { --g:#00b870; --g-soft:#e8faf3; --blue:#1e3a5f; --ink:#0f172a; --muted:#475569; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Segoe UI',system-ui,sans-serif; background:#64748b; print-color-adjust:exact; }
+    .flyer { width:1200px; height:675px; margin:12px auto; background:#fff; overflow:hidden; display:grid; grid-template-rows:auto 1fr auto; box-shadow:0 12px 40px rgba(0,0,0,.2); }
+    .hero { position:relative; height:280px; background:linear-gradient(90deg,rgba(15,23,42,.88),rgba(15,23,42,.4)), url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&q=80') center/cover; color:#fff; padding:28px 36px; }
+    .hero h1 { font-size:38px; font-weight:900; letter-spacing:-.03em; text-shadow:0 2px 12px rgba(0,0,0,.5); }
+    .hero p { margin-top:10px; max-width:520px; font-size:15px; font-weight:600; line-height:1.4; }
+    .chip { display:inline-block; margin-top:12px; background:rgba(0,184,112,.35); border:1px solid #6ee7b7; padding:8px 14px; border-radius:8px; font-size:12px; font-weight:800; }
+    .body { display:grid; grid-template-columns:1.2fr .8fr; gap:24px; padding:24px 36px; }
+    .steps { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:12px; }
+    .step { background:var(--blue); color:#fff; border-radius:10px; padding:12px 10px; text-align:center; font-size:10px; font-weight:800; line-height:1.3; }
+    .step span { display:block; font-size:8px; font-weight:600; opacity:.85; margin-top:4px; }
+    .icons { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px; }
+    .icons div { background:var(--g-soft); border-radius:10px; padding:12px; font-size:11px; font-weight:800; color:var(--ink); text-align:center; }
+    .icons small { display:block; font-size:9px; color:var(--muted); font-weight:600; margin-top:4px; }
+    .offers { display:flex; flex-direction:column; gap:10px; }
+    .offer { border:2px solid var(--g); border-radius:12px; padding:14px 16px; }
+    .offer.hero-offer { background:var(--g); color:var(--ink); }
+    .offer .t { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; }
+    .offer .p { font-size:24px; font-weight:900; margin-top:2px; }
+    .offer .d { font-size:10px; font-weight:600; margin-top:4px; line-height:1.35; }
+    .foot { background:var(--blue); color:#fff; padding:14px 36px; display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:700; }
+  </style>
+</head>
+<body>
+  <article class="flyer">
+    <header class="hero">
+      <h1>Instalación y servicios</h1>
+      <p>Llegamos, configuramos, capacitamos — tú solo vendes. Adaptamos tu PC o tablet para pedidos en pantalla.</p>
+      <span class="chip">Te lo dejamos andando en ~7 días hábiles</span>
+    </header>
+    <div class="body">
+      <div>
+        <strong style="font-size:13px;color:var(--ink)">Proceso en tu local</strong>
+        <div class="steps">
+          <div class="step">1 · ALIANZA<span>WhatsApp + datos del negocio</span></div>
+          <div class="step">2 · INSTALACIÓN<span>MP, menú, Point o QR</span></div>
+          <div class="step">3 · CAPACITACIÓN<span>~30 min en mostrador</span></div>
+          <div class="step">4 · ÉXITO<span>Tú vendes, nosotros soporte</span></div>
+        </div>
+        <div class="icons">
+          <div>Soporte Lun–Sáb<small>09:00–21:00 WhatsApp</small></div>
+          <div>Capacitación<small>Presencial o remota</small></div>
+          <div>PC o tablet<small>La adaptamos contigo</small></div>
+        </div>
+      </div>
+      <div class="offers">
+        <div class="offer hero-offer">
+          <div class="t">Recomendado</div>
+          <div class="p">$109.990</div>
+          <div class="d">Instalación $80.000 + primer mes $29.990 · Después solo la mensualidad</div>
+        </div>
+        <div class="offer">
+          <div class="t">Solo instalación visita</div>
+          <div class="p">$80.000</div>
+          <div class="d">Mercado Pago, menú ~20 ítems, prueba de cobro</div>
+        </div>
+        <div class="offer">
+          <div class="t">Setup completo</div>
+          <div class="p">$100.000</div>
+          <div class="d">Tú pones PC/tablet · visita + enseñanza</div>
+        </div>
+      </div>
+    </div>
+    <footer class="foot">
+      <span>JobsHours · Tiendas Inteligentes</span>
+      <span>tienda.jobshours.com · WhatsApp +56 9 6513 3289 · Araucanía</span>
+    </footer>
+  </article>
+</body>
+</html>

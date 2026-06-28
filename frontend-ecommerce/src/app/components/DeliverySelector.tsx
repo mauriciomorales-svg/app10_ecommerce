@@ -19,7 +19,18 @@ interface DeliverySelectorProps {
   value: DeliverySelection | null;
   onChange: (value: DeliverySelection | null) => void;
   pickupAddress: string;
+  /** Si el carrito es solo packs regalo, el envío es $0 */
+  productIds?: number[];
+  regaloPackFreeDelivery?: boolean;
+  /** Subtotal productos — para aviso pedido mínimo recomendado */
+  cartSubtotal?: number;
 }
+
+type RenaicoDeliveryMsg = {
+  min_pedido_delivery_clp?: number;
+  min_pedido_delivery_nota?: string;
+  ventanas?: { nombre: string; horario: string; dias: string }[];
+};
 
 export default function DeliverySelector({
   fulfillmentType,
@@ -27,8 +38,12 @@ export default function DeliverySelector({
   value,
   onChange,
   pickupAddress,
+  productIds = [],
+  regaloPackFreeDelivery = false,
+  cartSubtotal = 0,
 }: DeliverySelectorProps) {
   const [config, setConfig] = useState<DeliveryConfig | null>(null);
+  const [renaico, setRenaico] = useState<RenaicoDeliveryMsg | null>(null);
   const [addressInput, setAddressInput] = useState(value?.address ?? '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -37,7 +52,10 @@ export default function DeliverySelector({
     fetch('/api/checkout/delivery-config')
       .then((r) => r.json())
       .then((d) => {
-        if (d.success) setConfig(d);
+        if (d.success) {
+          setConfig(d);
+          setRenaico(d.renaico ?? null);
+        }
       })
       .catch(() => {});
   }, []);
@@ -66,8 +84,9 @@ export default function DeliverySelector({
       setLoading(true);
       setError('');
       try {
+        const ids = productIds.filter((id) => id > 0).join(',');
         const res = await fetch(
-          `/api/checkout/delivery-quote?lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}`,
+          `/api/checkout/delivery-quote?lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}${ids ? `&product_ids=${encodeURIComponent(ids)}` : ''}`,
         );
         const data = await res.json();
         if (!res.ok || !data.success) {
@@ -83,7 +102,7 @@ export default function DeliverySelector({
         setLoading(false);
       }
     },
-    [applyQuote, onChange],
+    [applyQuote, onChange, productIds],
   );
 
   const geocodeAddress = async () => {
@@ -98,7 +117,10 @@ export default function DeliverySelector({
       const res = await fetch('/api/checkout/geocode', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address: addr }),
+        body: JSON.stringify({
+          address: addr,
+          product_ids: productIds.filter((id) => id > 0),
+        }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
@@ -141,8 +163,8 @@ export default function DeliverySelector({
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-lg border border-emerald-100 space-y-4">
-      <h2 className="text-lg font-semibold text-[#1a1a2e] flex items-center gap-2">
-        <Truck className="h-5 w-5 text-[#16a34a]" /> ¿Cómo recibes tu pedido?
+      <h2 className="text-lg font-semibold text-brand-ink flex items-center gap-2">
+        <Truck className="h-5 w-5 text-brand-primary" /> ¿Cómo recibes tu pedido?
       </h2>
 
       <div className="grid grid-cols-2 gap-2">
@@ -155,11 +177,11 @@ export default function DeliverySelector({
           }}
           className={`p-3 rounded-xl border-2 text-left transition-colors ${
             fulfillmentType === 'pickup'
-              ? 'border-[#16a34a] bg-emerald-50'
+              ? 'border-brand-primary bg-emerald-50'
               : 'border-gray-200 hover:border-emerald-200'
           }`}
         >
-          <Store className="h-5 w-5 text-[#16a34a] mb-1" />
+          <Store className="h-5 w-5 text-brand-primary mb-1" />
           <p className="font-semibold text-sm">Retiro en tienda</p>
           <p className="text-[10px] text-gray-500">Sin costo de envío</p>
         </button>
@@ -168,27 +190,56 @@ export default function DeliverySelector({
           onClick={() => onFulfillmentChange('delivery')}
           className={`p-3 rounded-xl border-2 text-left transition-colors ${
             fulfillmentType === 'delivery'
-              ? 'border-[#16a34a] bg-emerald-50'
+              ? 'border-brand-primary bg-emerald-50'
               : 'border-gray-200 hover:border-emerald-200'
           }`}
         >
-          <Truck className="h-5 w-5 text-[#16a34a] mb-1" />
+          <Truck className="h-5 w-5 text-brand-primary mb-1" />
           <p className="font-semibold text-sm">Envío a domicilio</p>
           <p className="text-[10px] text-gray-500">
-            {config?.pricing.hint ?? 'Desde $2.000 en comuna'}
+            {regaloPackFreeDelivery
+              ? 'Gratis con tu pack regalo'
+              : (config?.pricing.hint ?? 'Desde $2.000 en comuna')}
           </p>
         </button>
       </div>
 
       {fulfillmentType === 'pickup' && (
         <p className="text-xs text-gray-500 flex items-start gap-1">
-          <MapPin className="h-3.5 w-3.5 shrink-0 mt-0.5 text-[#16a34a]" />
+          <MapPin className="h-3.5 w-3.5 shrink-0 mt-0.5 text-brand-primary" />
           Retiras en {pickupAddress || 'Santiago Watt 205, Renaico'} con tu código tras pagar.
         </p>
       )}
 
       {fulfillmentType === 'delivery' && (
         <div className="space-y-3 border-t border-gray-100 pt-3">
+          {renaico?.ventanas && renaico.ventanas.length > 0 && (
+            <div className="rounded-xl bg-slate-50 border border-slate-100 px-3 py-2.5 text-xs text-gray-600">
+              <p className="font-semibold text-brand-ink mb-1">Ventanas de entrega (Renaico)</p>
+              <ul className="space-y-1">
+                {renaico.ventanas.map((v) => (
+                  <li key={v.nombre}>
+                    <strong>{v.nombre}</strong> {v.horario} · {v.dias}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-[10px] text-gray-500">
+                Te confirmamos la hora exacta por WhatsApp tras pagar.
+              </p>
+            </div>
+          )}
+
+          {!regaloPackFreeDelivery &&
+            (renaico?.min_pedido_delivery_clp ?? 0) > 0 &&
+            cartSubtotal > 0 &&
+            cartSubtotal < (renaico?.min_pedido_delivery_clp ?? 0) && (
+              <p className="text-xs text-amber-800 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2">
+                Para envío recomendamos pedidos desde{' '}
+                <strong>${formatCLP(renaico?.min_pedido_delivery_clp ?? 0)}</strong>.
+                {renaico?.min_pedido_delivery_nota ? ` ${renaico.min_pedido_delivery_nota}` : null}
+              </p>
+            )}
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Dirección de entrega *
@@ -206,7 +257,7 @@ export default function DeliverySelector({
               type="button"
               onClick={geocodeAddress}
               disabled={loading}
-              className="flex-1 min-w-[140px] py-2 bg-[#16a34a] text-white text-sm font-semibold rounded-lg disabled:opacity-50"
+              className="flex-1 min-w-[140px] py-2 bg-brand-primary text-white text-sm font-semibold rounded-lg disabled:opacity-50"
             >
               Calcular envío
             </button>
@@ -228,9 +279,24 @@ export default function DeliverySelector({
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 
+          {regaloPackFreeDelivery && fulfillmentType === 'delivery' && !value && (
+            <p className="text-xs text-emerald-800 bg-emerald-50 border border-emerald-100 rounded-xl px-3 py-2">
+              Tu pack regalo incluye <strong>envío gratis</strong> en Renaico. Calcula la dirección para confirmar cobertura.
+            </p>
+          )}
+
+          {value?.quote && value.amount === 0 && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-sm">
+              <p className="font-bold text-brand-primary">Envío incluido — $0</p>
+              <p className="text-gray-600 text-xs mt-1">
+                Pack regalo · ~{value.quote.distance_km_adjusted} km desde Watt 205
+              </p>
+            </div>
+          )}
+
           {value?.quote && value.amount > 0 && (
             <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-sm">
-              <p className="font-bold text-[#16a34a]">
+              <p className="font-bold text-brand-primary">
                 Envío: ${formatCLP(value.amount)}
               </p>
               <p className="text-gray-600 text-xs mt-1">

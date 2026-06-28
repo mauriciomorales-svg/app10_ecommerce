@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>JobsHours · Planes feria · Banner 1200×675</title>
+  <style>
+    :root {
+      --g: #00b870;
+      --g-dark: #00995f;
+      --g-soft: #e8faf3;
+      --blue: #1e3a5f;
+      --blue-light: #2563eb;
+      --o: #e85d04;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --white: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #64748b;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .flyer {
+      width: 1200px;
+      height: 675px;
+      margin: 12px auto;
+      position: relative;
+      overflow: hidden;
+      background: var(--blue);
+      color: var(--white);
+      box-shadow: 0 12px 40px rgba(0,0,0,.25);
+    }
+    .bg {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(100deg, rgba(15,23,42,.94) 0%, rgba(15,23,42,.78) 45%, rgba(15,23,42,.4) 100%),
+        url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1400&q=80') center/cover;
+    }
+    .top {
+      position: relative; z-index: 2;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 28px 0;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      width: 46px; height: 46px; border-radius: 12px;
+      background: var(--white); color: var(--g-dark);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 17px;
+    }
+    .brand-text strong { display: block; font-size: 19px; letter-spacing: -.02em; }
+    .brand-text span { font-size: 10px; opacity: .9; font-weight: 600; }
+    .top-right { display: flex; align-items: center; gap: 14px; }
+    .pill {
+      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25);
+      padding: 7px 14px; border-radius: 999px; font-size: 10px; font-weight: 800;
+      letter-spacing: .05em; text-transform: uppercase;
+    }
+    .qr-mini {
+      width: 56px; height: 56px; border-radius: 8px;
+      background: var(--white); padding: 3px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.3);
+    }
+    .qr-mini img { width: 100%; height: 100%; display: block; }
+    .main {
+      position: relative; z-index: 2;
+      display: grid; grid-template-columns: 1.15fr .85fr;
+      gap: 20px; padding: 20px 28px 12px;
+      height: 318px;
+    }
+    .copy h1 {
+      font-size: 40px; line-height: 1.05; font-weight: 900; letter-spacing: -.03em;
+      text-shadow: 0 2px 16px rgba(0,0,0,.5);
+    }
+    .copy h1 em { color: #6ee7b7; font-style: normal; display: block; font-size: 32px; margin-top: 4px; }
+    .copy .sub {
+      margin-top: 12px; max-width: 520px;
+      font-size: 13px; line-height: 1.4; font-weight: 600;
+      color: rgba(255,255,255,.95);
+    }
+    .copy .entry {
+      margin-top: 12px;
+      background: var(--o);
+      display: inline-block;
+      padding: 6px 12px; border-radius: 6px;
+      font-size: 10px; font-weight: 800;
+    }
+    .visual {
+      display: flex; align-items: flex-end; justify-content: center; gap: 10px;
+    }
+    .device {
+      background: rgba(255,255,255,.95); border-radius: 14px; padding: 8px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.35);
+      color: var(--ink); text-align: center;
+    }
+    .device.tablet { width: 200px; }
+    .device.point { width: 108px; padding: 12px 8px; }
+    .device .screen {
+      background: var(--g-soft); border-radius: 8px; padding: 10px 6px;
+      font-size: 8px; font-weight: 800; color: var(--g-dark); line-height: 1.35;
+    }
+    .device .mini { font-size: 7px; color: var(--muted); margin-top: 5px; font-weight: 600; }
+    .plans-row {
+      position: relative; z-index: 2;
+      display: grid; grid-template-columns: 1.15fr 1fr 1fr;
+      gap: 0;
+      margin: 0 28px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+      background: var(--white);
+      color: var(--ink);
+    }
+    .plan-col {
+      padding: 12px 14px;
+      border-right: 1px solid #e2e8f0;
+    }
+    .plan-col:last-child { border-right: none; }
+    .plan-col.featured {
+      background: linear-gradient(180deg, var(--g-soft) 0%, #fff 100%);
+      box-shadow: inset 0 0 0 3px var(--g);
+    }
+    .plan-col .tier {
+      font-size: 8px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .05em; color: var(--muted);
+    }
+    .plan-col.featured .tier { color: var(--g-dark); }
+    .plan-col h3 { font-size: 13px; font-weight: 900; color: var(--blue); margin-top: 4px; line-height: 1.2; }
+    .plan-col p { font-size: 9px; font-weight: 600; color: var(--muted); margin-top: 5px; line-height: 1.35; }
+    .plan-col .price {
+      margin-top: 8px;
+      font-size: 18px; font-weight: 900;
+      color: var(--g-dark);
+    }
+    .plan-col.secondary .price { color: var(--ink); font-size: 16px; }
+    .plan-col .per { font-size: 8px; font-weight: 700; color: var(--muted); }
+    .pricing {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
+      display: grid; grid-template-columns: 1.25fr .9fr .9fr .95fr;
+      background: rgba(15,23,42,.98);
+      border-top: 3px solid var(--g);
+    }
+    .price-box {
+      padding: 12px 16px;
+      border-right: 1px solid rgba(255,255,255,.1);
+    }
+    .price-box:last-child { border-right: none; }
+    .price-box.highlight { background: var(--g); color: var(--ink); }
+    .price-box .label { font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; opacity: .88; }
+    .price-box .amount { font-size: 20px; font-weight: 900; margin-top: 2px; line-height: 1.1; }
+    .price-box .detail { font-size: 8px; font-weight: 600; margin-top: 3px; line-height: 1.35; opacity: .92; }
+    .foot {
+      position: absolute; bottom: 78px; right: 28px; z-index: 3;
+      font-size: 9px; font-weight: 700; color: rgba(255,255,255,.95);
+      text-align: right;
+      text-shadow: 0 1px 4px rgba(0,0,0,.5);
+    }
+    .foot strong { color: #6ee7b7; }
+    @media print {
+      body { background: #fff; }
+      .flyer { margin: 0; box-shadow: none; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <article class="flyer">
+    <div class="bg" aria-hidden="true"></div>
+
+    <header class="top">
+      <div class="brand">
+        <div class="logo">JH</div>
+        <div class="brand-text">
+          <strong>JobsHours</strong>
+          <span>Tiendas Inteligentes · Araucanía</span>
+        </div>
+      </div>
+      <div class="top-right">
+        <div class="pill">Tablet + Mercado Pago · Soporte humano</div>
+        <div class="qr-mini">
+          <img
+            src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&amp;data=https%3A%2F%2Ftienda.jobshours.com%2F"
+            width="50"
+            height="50"
+            alt="QR tienda.jobshours.com"
+          />
+        </div>
+      </div>
+    </header>
+
+    <div class="main">
+      <div class="copy">
+        <h1>Tu cliente pide y paga solo.<em>Tú te quedas en la cocina.</em></h1>
+        <p class="sub">
+          <strong>Empezamos en tu local:</strong> tablet de pedidos + Mercado Pago + menú.
+          WhatsApp automático y tienda web son <strong>planes superiores</strong> — no el primer día.
+        </p>
+        <span class="entry">▼ EMPIEZA AQUÍ · Plan Menos filas (JH-01)</span>
+      </div>
+      <div class="visual">
+        <div class="device tablet">
+          <div class="screen">MENÚ EN PANTALLA<br>Cliente elige y paga<br>Pedido a cocina</div>
+          <div class="mini">Tablet o PC · te adaptamos</div>
+        </div>
+        <div class="device point">
+          <div class="screen">POINT<br>Mercado Pago</div>
+          <div class="mini">Maquinita aparte</div>
+        </div>
+      </div>
+    </div>
+
+    <section class="plans-row" aria-label="Tres planes mensuales">
+      <div class="plan-col featured">
+        <p class="tier">Plan 1 · Menos filas</p>
+        <h3>Tablet + MP en mostrador</h3>
+        <p>Atención WhatsApp <strong>manual</strong> Lun–Sáb 09–21 h · +56 9 6513 3289</p>
+        <div class="price">$29.990</div>
+        <div class="per">/mes + IVA</div>
+      </div>
+      <div class="plan-col secondary">
+        <p class="tier">Plan 2 · upgrade</p>
+        <h3>+ WhatsApp automático</h3>
+        <p>Cuando Plan 1 funciona. Meta según tu número. Sin prometer 24/7 día 1.</p>
+        <div class="price">$44.990</div>
+        <div class="per">/mes + IVA</div>
+      </div>
+      <div class="plan-col secondary">
+        <p class="tier">Plan 3 · upgrade</p>
+        <h3>+ Tienda web</h3>
+        <p>Mismo stock local + online. Piloto — cotizamos con calma.</p>
+        <div class="price">$59.990</div>
+        <div class="per">/mes + IVA</div>
+      </div>
+    </section>
+
+    <p class="foot">
+      <strong>7 días hábiles</strong> · tienda.jobshours.com<br>
+      WhatsApp +56 9 6513 3289
+    </p>
+
+    <footer class="pricing">
+      <div class="price-box highlight">
+        <div class="label">Recomendado · te lo dejamos andando</div>
+        <div class="amount">$109.990</div>
+        <div class="detail">Instalación $80.000 + 1.er mes $29.990 · Menú + MP + enseñanza</div>
+      </div>
+      <div class="price-box">
+        <div class="label">Pack Express</div>
+        <div class="amount">$199.990</div>
+        <div class="detail">Tablet 10" + soporte + instalación + mes 1</div>
+      </div>
+      <div class="price-box">
+        <div class="label">Minimarket · caja</div>
+        <div class="amount">$19.990/mes</div>
+        <div class="detail">Plan retail · tienda.jobshours.com/minimarket</div>
+      </div>
+      <div class="price-box">
+        <div class="label">¿Dudas?</div>
+        <div class="amount">6513 3289</div>
+        <div class="detail">Escanea QR arriba · wa.me/56965133289 · Atención manual</div>
+      </div>
+    </footer>
+  </article>
+</body>
+</html>

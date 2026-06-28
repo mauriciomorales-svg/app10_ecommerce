@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>JobsHours · Vista previa carrusel FB</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 24px;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f172a; color: #e2e8f0;
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 8px; }
+    p { color: #94a3b8; margin-bottom: 24px; max-width: 720px; line-height: 1.5; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      max-width: 1100px;
+    }
+    .card {
+      background: #1e293b;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #334155;
+    }
+    .card h2 { font-size: 14px; padding: 12px 14px; margin: 0; background: #334155; }
+    .card iframe {
+      width: 100%;
+      aspect-ratio: 1;
+      border: 0;
+      display: block;
+      background: #fff;
+    }
+    .links { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 10px; }
+    .links a {
+      color: #6ee7b7; font-weight: 700; text-decoration: none;
+      background: #1e293b; padding: 10px 16px; border-radius: 8px;
+      border: 1px solid #334155;
+    }
+    .links a:hover { background: #334155; }
+  </style>
+</head>
+<body>
+  <h1>Carrusel Facebook JobsHours (v3)</h1>
+  <p>
+    Cuatro slides 1080×1080 · Mensaje honesto (Plan 1 primero, upgrades después).
+    Chrome: ventana 1080×1080 o DevTools → captura. Subir a Facebook en orden 1 → 4.
+  </p>
+  <div class="grid">
+    <div class="card">
+      <h2>1 · Hero — Menos fila, más pedidos claros</h2>
+      <iframe src="FB-01-HERO-1080.html" title="Slide 1"></iframe>
+    </div>
+    <div class="card">
+      <h2>2 · Plan entrada — $29.990 / $109.990</h2>
+      <iframe src="FB-02-PLAN-ENTRADA-1080.html" title="Slide 2"></iframe>
+    </div>
+    <div class="card">
+      <h2>3 · Upgrades — $44.990 · $59.990</h2>
+      <iframe src="FB-03-PLANES-UPGRADE-1080.html" title="Slide 3"></iframe>
+    </div>
+    <div class="card">
+      <h2>4 · CTA — WhatsApp 6513 3289</h2>
+      <iframe src="FB-04-CTA-1080.html" title="Slide 4"></iframe>
+    </div>
+  </div>
+  <div class="links">
+    <a href="FB-01-HERO-1080.html" target="_blank">Abrir slide 1</a>
+    <a href="FB-02-PLAN-ENTRADA-1080.html" target="_blank">Abrir slide 2</a>
+    <a href="FB-03-PLANES-UPGRADE-1080.html" target="_blank">Abrir slide 3</a>
+    <a href="FB-04-CTA-1080.html" target="_blank">Abrir slide 4</a>
+  </div>
+</body>
+</html>

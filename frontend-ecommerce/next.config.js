@@ -23,6 +23,16 @@ const nextConfig = {
         destination: '/bio',
       },
       {
+        source: '/',
+        has: [{ type: 'host', value: 'tienda.jobshours.com' }],
+        destination: '/jobshours',
+      },
+      {
+        source: '/',
+        has: [{ type: 'host', value: 'shop.jobshours.com' }],
+        destination: '/jobshours',
+      },
+      {
         source: '/fotos_productos/:path*',
         destination: `${FOTOS_UPSTREAM}/fotos_productos/:path*`,
       },

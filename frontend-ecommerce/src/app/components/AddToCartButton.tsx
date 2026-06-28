@@ -1,7 +1,9 @@
 'use client';
 
 import { useCart } from '../context/CartContext';
-import { Plus, ShoppingCart, Zap } from 'lucide-react';
+import { useCartFeedback } from '../hooks/useCartFeedback';
+import { resolveCartStock } from '../lib/cartHelpers';
+import { Plus, ShoppingCart, Store, Zap } from 'lucide-react';
 
 interface AddToCartButtonProps {
   producto: {
@@ -14,33 +16,43 @@ interface AddToCartButtonProps {
     stock_disponible: number;
     es_pack?: boolean;
     has_bundle_options?: boolean;
+    has_customization?: boolean;
+    venta_web?: boolean;
   };
   onOpenBuilder?: () => void;
   compact?: boolean;
 }
 
 export default function AddToCartButton({ producto, onOpenBuilder, compact = false }: AddToCartButtonProps) {
-  const { addToCart, items } = useCart();
+  const { items } = useCart();
+  const { addWithFeedback } = useCartFeedback();
 
   const inCart = items.find(i => i.idproducto === producto.idproducto);
   const quantity = inCart?.cantidad || 0;
 
   const stockReal = producto.stock_disponible ?? producto.stock;
+  const compraWeb = producto.venta_web !== false;
   const idcategoria = producto.categorias?.[0]?.idcategoria ?? null;
 
-  const necesitaBuilder = producto.es_pack || producto.has_bundle_options;
+  const necesitaBuilder =
+    producto.es_pack || producto.has_bundle_options || producto.has_customization;
 
-  const handleAdd = () => {
+  const disabled = stockReal <= 0 || !compraWeb;
+
+  const handleAdd = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    e?.preventDefault();
+    if (disabled) return;
     if (necesitaBuilder && onOpenBuilder) {
       onOpenBuilder();
       return;
     }
-    addToCart({
+    addWithFeedback({
       idproducto: producto.idproducto,
       nombre: producto.nombre,
       precio_venta: producto.precio_venta,
       imagen: producto.imagen_url || null,
-      stock: stockReal,
+      stock: resolveCartStock(stockReal),
       idcategoria,
     });
   };
@@ -49,20 +61,28 @@ export default function AddToCartButton({ producto, onOpenBuilder, compact = fal
     return (
       <button
         type="button"
-        onClick={handleAdd}
-        disabled={stockReal <= 0}
-        aria-label={necesitaBuilder ? 'Personalizar pack' : 'Agregar al carrito'}
-        className={`w-9 h-9 rounded-full shadow-md flex items-center justify-center transition-transform active:scale-95 ${
-          stockReal <= 0
+        onClick={(e) => handleAdd(e)}
+        disabled={disabled}
+        aria-label={
+          !compraWeb
+            ? 'Solo en local'
+            : necesitaBuilder
+            ? 'Personalizar pack'
+            : 'Agregar al carrito'
+        }
+        className={`touch-target min-h-[44px] min-w-[44px] rounded-full shadow-md flex items-center justify-center transition-transform active:scale-95 ${
+          disabled
             ? 'bg-gray-300 cursor-not-allowed'
             : quantity > 0
-            ? 'bg-[#15803d] text-white ring-2 ring-white'
+            ? 'bg-brand-primary-hover text-white ring-2 ring-white'
             : necesitaBuilder
-            ? 'bg-amber-500 text-white'
-            : 'bg-[#16a34a] text-white hover:bg-[#15803d]'
+            ? 'bg-brand-accent text-brand-ink'
+            : 'bg-brand-primary text-white hover:bg-brand-primary-hover'
         }`}
       >
-        {stockReal <= 0 ? (
+        {!compraWeb ? (
+          <Store className="h-4 w-4 opacity-70" />
+        ) : stockReal <= 0 ? (
           <ShoppingCart className="h-4 w-4 opacity-60" />
         ) : quantity > 0 ? (
           <span className="text-sm font-bold">{quantity}</span>
@@ -78,34 +98,36 @@ export default function AddToCartButton({ producto, onOpenBuilder, compact = fal
   return (
     <button
       type="button"
-      onClick={handleAdd}
-      disabled={stockReal <= 0}
-      className={`w-full py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 font-medium ${
-        stockReal <= 0
+      onClick={(e) => handleAdd(e)}
+      disabled={disabled}
+      className={`w-full min-h-[44px] py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 font-medium ${
+        disabled
           ? 'bg-gray-300 cursor-not-allowed'
           : quantity > 0
-          ? 'bg-green-600 hover:bg-green-700 text-white shadow-md shadow-green-500/20'
+          ? 'bg-brand-success hover:bg-brand-success text-white shadow-md shadow-green-500/20'
           : producto.es_pack
-          ? 'bg-gradient-to-r from-[#16a34a] to-[#22c55e] hover:from-[#15803d] hover:to-[#16a34a] text-white shadow-md shadow-emerald-500/20'
-          : 'bg-[#16a34a] hover:bg-[#15803d] text-white shadow-md shadow-emerald-500/20'
+          ? 'bg-gradient-to-r from-brand-primary to-brand-success hover:from-brand-primary-hover hover:to-brand-primary text-white shadow-md shadow-brand-primary/20'
+          : 'bg-brand-primary hover:bg-brand-primary-hover text-white shadow-md shadow-brand-primary/20'
       }`}
     >
-      {stockReal <= 0 ? (
+      {!compraWeb ? (
+        <Store className="h-4 w-4" />
+      ) : stockReal <= 0 ? (
         <ShoppingCart className="h-4 w-4" />
       ) : necesitaBuilder ? (
         <span>⚡</span>
       ) : (
         <ShoppingCart className="h-4 w-4" />
       )}
-      {stockReal <= 0
+      {!compraWeb
+        ? 'Solo en local · Watt 205'
+        : stockReal <= 0
         ? 'Sin stock'
         : quantity > 0
         ? `En carrito (${quantity})`
         : necesitaBuilder
         ? '⚡ Personalizar'
-        : 'Agregar al carrito'
-      }
+        : 'Agregar al carrito'}
     </button>
   );
 }
-

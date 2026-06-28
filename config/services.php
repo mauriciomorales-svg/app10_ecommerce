@@ -48,4 +48,17 @@ return [
         'webhook_secret' => env('MERCADOPAGO_WEBHOOK_SECRET', ''),
     ],
 
+    'inventario' => [
+        'url' => env('INVENTARIO_API_URL', 'http://127.0.0.1:8003/api'),
+        'internal_key' => env('INVENTARIO_INTERNAL_KEY', ''),
+    ],
+
+    'serper' => [
+        'api_key' => env('SERPER_API_KEY', ''),
+    ],
+
+    'jobs_hours' => [
+        'analytics_key' => env('JH_ANALYTICS_KEY', ''),
+    ],
+
 ];

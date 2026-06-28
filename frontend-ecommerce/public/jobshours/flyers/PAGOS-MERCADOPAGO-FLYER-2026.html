@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>JobsHours · Pagos Mercado Pago · 2026</title>
+  <style>
+    :root { --g:#00b870; --blue:#1e3a5f; --ink:#0f172a; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Segoe UI',system-ui,sans-serif; background:#64748b; print-color-adjust:exact; }
+    .flyer { width:1200px; height:675px; margin:12px auto; background:var(--blue); color:#fff; overflow:hidden; display:grid; grid-template-columns:1fr 1fr; box-shadow:0 12px 40px rgba(0,0,0,.2); }
+    .left { padding:40px 36px; display:flex; flex-direction:column; justify-content:center; }
+    .left h1 { font-size:42px; font-weight:900; line-height:1.05; letter-spacing:-.03em; }
+    .left h1 em { color:#6ee7b7; font-style:normal; }
+    .left p { margin-top:16px; font-size:16px; font-weight:600; line-height:1.45; max-width:440px; opacity:.95; }
+    .pill { margin-top:20px; display:inline-block; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.3); padding:10px 16px; border-radius:999px; font-size:12px; font-weight:800; }
+    .right { background:linear-gradient(135deg,#0ea5e9 0%,#0284c7 50%,#0369a1 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px; gap:20px; }
+    .device { background:#fff; border-radius:20px; padding:20px 24px; color:var(--ink); text-align:center; box-shadow:0 16px 40px rgba(0,0,0,.25); min-width:200px; }
+    .device .brand { font-size:11px; font-weight:800; color:#009ee3; letter-spacing:.08em; }
+    .device .amt { font-size:28px; font-weight:900; margin:8px 0; color:var(--g); }
+    .device .ok { font-size:12px; font-weight:700; color:#64748b; }
+    .cards { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+    .card { background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.35); border-radius:12px; padding:14px 18px; font-size:11px; font-weight:800; text-align:center; max-width:140px; }
+    .foot { grid-column:1/-1; background:rgba(0,0,0,.25); padding:12px 36px; font-size:11px; font-weight:700; display:flex; justify-content:space-between; }
+  </style>
+</head>
+<body>
+  <article class="flyer">
+    <div class="left">
+      <h1>Pagos Pro<br><em>Mercado Pago</em></h1>
+      <p>Cobro digital instalado y funcionando: tarjeta en maquinita Point, QR en celular o link de pago. Lo enlazamos en la visita.</p>
+      <span class="pill">Maquinita Point: compra aparte · precio siempre claro</span>
+    </div>
+    <div class="right">
+      <div class="device">
+        <div class="brand">MERCADO PAGO</div>
+        <div class="amt">Cobro OK</div>
+        <div class="ok">Tarjeta · débito · QR</div>
+      </div>
+      <div class="cards">
+        <div class="card">Point Smart<br><small style="font-weight:600;opacity:.9">En mostrador</small></div>
+        <div class="card">QR celular<br><small style="font-weight:600;opacity:.9">Sin maquinita aún</small></div>
+        <div class="card">Prueba contigo<br><small style="font-weight:600;opacity:.9">En instalación</small></div>
+      </div>
+    </div>
+    <footer class="foot">
+      <span>JobsHours</span>
+      <span>tienda.jobshours.com · Araucanía</span>
+    </footer>
+  </article>
+</body>
+</html>

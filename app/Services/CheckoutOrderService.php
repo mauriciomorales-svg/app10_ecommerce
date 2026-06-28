@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Venta;
+use App\Support\MarketingAttribution;
 use Illuminate\Support\Facades\DB;
 
 class CheckoutOrderService
@@ -19,14 +20,24 @@ class CheckoutOrderService
         string $medioPago = 'flow',
         string $fulfillmentType = 'pickup',
         ?array $delivery = null,
-        ?array $totals = null
+        ?array $totals = null,
+        ?string $couponCode = null,
+        int $couponDiscount = 0,
+        array $marketing = []
     ): Venta {
-        $totals = $totals ?? CheckoutTotalsService::compute($items, $packagingKey, $fulfillmentType, $delivery);
+        $totals = $totals ?? CheckoutTotalsService::compute(
+            $items,
+            $packagingKey,
+            $fulfillmentType,
+            $delivery,
+            $couponDiscount
+        );
 
         $subtotalProductos = (int) $totals['subtotal_productos'];
         $packaging = $totals['packaging'];
         $deliveryAmount = (int) ($totals['delivery_amount'] ?? 0);
         $deliveryQuote = $totals['delivery'] ?? null;
+        $discount = (int) ($totals['coupon_discount'] ?? $couponDiscount);
         $total = (int) $totals['total'];
 
         $nombre = trim((string) ($cliente['nombre'] ?? ''));
@@ -34,13 +45,29 @@ class CheckoutOrderService
         $telefono = trim((string) ($cliente['telefono'] ?? ''));
         $fechaRetiro = (string) ($cliente['fecha_retiro'] ?? '');
 
-        $venta = Venta::create([
+        $observaciones = MarketingAttribution::appendToObservaciones(
+            self::buildObservaciones(
+                $nombre,
+                $email,
+                $telefono,
+                $fechaRetiro,
+                $packaging,
+                $fulfillmentType,
+                $delivery,
+                $deliveryAmount,
+                $couponCode,
+                $discount
+            ),
+            $marketing
+        );
+
+        $ventaData = [
             'numero_venta' => null,
             'fecha' => now(),
             'total' => $total,
             'subtotal' => $subtotalProductos,
             'subtotal_productos' => $subtotalProductos,
-            'descuento' => 0,
+            'descuento' => $discount,
             'medio_pago' => $medioPago,
             'estado' => 'pendiente',
             'estado_retiro' => $fulfillmentType === 'pickup' ? 'pendiente_preparacion' : 'envio_solicitado',
@@ -57,11 +84,19 @@ class CheckoutOrderService
             'packaging_key' => $packaging['key'],
             'packaging_label' => $packaging['label'],
             'packaging_amount' => $packaging['amount'],
-            'observaciones' => self::buildObservaciones($nombre, $email, $telefono, $fechaRetiro, $packaging, $fulfillmentType, $delivery, $deliveryAmount),
+            'observaciones' => $observaciones,
             'jobshours_publish_status' => $fulfillmentType === 'delivery'
                 ? JobsHoursStoreDemandService::STATUS_PENDING
                 : null,
-        ]);
+        ];
+
+        foreach (['utm_source', 'utm_medium', 'utm_campaign', 'referrer', 'landing_path'] as $field) {
+            if (! empty($marketing[$field])) {
+                $ventaData[$field] = $marketing[$field];
+            }
+        }
+
+        $venta = Venta::create($ventaData);
 
         $venta->update(['numero_venta' => $venta->idventa]);
 
@@ -125,7 +160,9 @@ class CheckoutOrderService
         array $packaging,
         string $fulfillmentType,
         ?array $delivery,
-        int $deliveryAmount
+        int $deliveryAmount,
+        ?string $couponCode = null,
+        int $couponDiscount = 0
     ): string {
         $parts = array_filter([
             'Web',
@@ -138,9 +175,12 @@ class CheckoutOrderService
                 ? 'Destino: '.($delivery['address'] ?? '')
                 : null,
             $fulfillmentType === 'delivery' && $deliveryAmount > 0
-                ? 'Envío estimado JobsHours (cliente paga aparte): $'.number_format($deliveryAmount, 0, ',', '.')
+                ? 'Envío incluido en pedido: $'.number_format($deliveryAmount, 0, ',', '.')
                 : null,
             'Empaque: '.($packaging['label'] ?? ''),
+            $couponCode && $couponDiscount > 0
+                ? 'Cupón: '.$couponCode.' (-$'.number_format($couponDiscount, 0, ',', '.').')'
+                : null,
         ]);
 
         return implode(' | ', $parts);
@@ -175,6 +215,13 @@ class CheckoutOrderService
 
             PickupFulfillmentService::assignPickupCode($locked);
             InventoryService::deductStockForVenta((int) $locked->idventa);
+            ValeDescuentoService::consumeFromObservaciones(
+                (string) ($locked->observaciones ?? ''),
+                (int) $locked->idventa,
+                (string) ($locked->cliente_email ?? ''),
+                (string) ($locked->cliente_telefono ?? ''),
+                (int) ($locked->descuento ?? 0)
+            );
 
             $fresh = $locked->fresh();
             JobsHoursStoreDemandService::publishForPaidVenta($fresh);

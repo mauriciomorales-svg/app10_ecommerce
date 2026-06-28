@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Schema;
 use App\Support\CurrentCommerceStore;
+use App\Support\CommerceStoreSettings;
+use App\Services\ProductImageUrlService;
 
 class Producto extends Model
 {
@@ -30,7 +32,9 @@ class Producto extends Model
         'stock_minimo',
         'alerta_stock_minimo',
         'activo',
+        'venta_web',
         'es_pack',
+        'builder_profile',
         'ultima_venta',
         'veces_vendido',
         'commerce_store_id',
@@ -44,6 +48,7 @@ class Producto extends Model
         'stock_minimo' => 'integer',
         'alerta_stock_minimo' => 'integer',
         'activo' => 'boolean',
+        'venta_web' => 'boolean',
         'es_pack' => 'boolean',
         'ultima_venta' => 'datetime',
         'veces_vendido' => 'integer',
@@ -91,19 +96,21 @@ class Producto extends Model
 
     public function getImagenUrlAttribute()
     {
-        $codigo = $this->codigobarra ?? null;
-        if ($codigo) {
-            foreach (['jpg', 'jpeg', 'png', 'webp'] as $ext) {
-                if (file_exists(public_path("fotos_productos/{$codigo}.{$ext}"))) {
-                    return "/fotos_productos/{$codigo}.{$ext}";
-                }
-            }
+        $fromFile = ProductImageUrlService::resolveForProduct(
+            $this->nombre,
+            $this->codigobarra,
+            (int) $this->idproducto
+        );
+        if ($fromFile !== null) {
+            return $fromFile;
         }
+
         // Fallback: imagen guardada en BD (bytea)
         $raw = $this->getAttributes()['imagen'] ?? null;
         if ($raw && (is_resource($raw) || strlen($raw) > 0)) {
             return "/api/productos/{$this->idproducto}/imagen";
         }
+
         return null;
     }
 
@@ -149,7 +156,7 @@ class Producto extends Model
 
         $componentes = $this->componentes;
         if ($componentes->isEmpty()) {
-            return 0;
+            return $this->stock;
         }
 
         return $componentes->map(function ($componente) {
@@ -170,6 +177,12 @@ class Producto extends Model
                     ->orderBy('sort_order');
     }
 
+    public function sugerenciasOrigen(): HasMany
+    {
+        return $this->hasMany(ProductoSugerencia::class, 'producto_origen_id', 'idproducto')
+                    ->orderBy('orden');
+    }
+
     public function getHasBundleOptionsAttribute(): bool
     {
         return $this->bundleOptions()->exists();
@@ -188,6 +201,16 @@ class Producto extends Model
     public function scopeActivo($query)
     {
         return $query->where('activo', true);
+    }
+
+    /** Activo en inventario (visible en web si activo; compra depende de venta_web). */
+    public function scopeDisponibleEnWeb($query)
+    {
+        if (Schema::hasColumn($this->getTable(), 'activo')) {
+            $query->where('activo', true);
+        }
+
+        return $query;
     }
 
     public function getTieneStockAttribute()

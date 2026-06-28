@@ -1,0 +1,54 @@
+Edición rápida — tus fotos antiguas (NO borrar ORIGINAL)
+Carpeta: edicion-facebook-dia-padre/
+
+Archivos base (tuyos, ~2,5 MB):
+  01-completo-ORIGINAL.png
+  02-premium-ORIGINAL.png
+  03-bandeja-ORIGINAL.png
+
+=== CANVA GRATIS — 15 minutos total ===
+
+1. canva.com → Video → Instagram Reel (9:16)
+
+2. Por cada pack (3 páginas, 4 seg c/u):
+   - Fondo: color sólido #0f172a (azul oscuro) o sube misma foto difuminada al 30%
+   - Sube el PNG ORIGINAL de esta carpeta
+   - Ajusta: "Eliminar fondo" solo si quieres; si no, deja foto tal cual
+   - Texto encima:
+     * Completo: "Pack Papá Completo" + "$16.990"
+     * Premium: "Pack Papá Premium" + "$21.990"
+     * Bandeja: "Pack Papá Bandeja" + "$24.990"
+   - Fuente: Montserrat o similar, blanco, grande
+
+3. Página 1 (hook): solo texto
+   "Día del Padre · 19 JUN"
+   "DondeMorales · Renaico"
+
+4. Página final (5 seg):
+   "Reserva WhatsApp"
+   "+56 9 7564 7756"
+   "Retiro 19 jun · Watt 205"
+
+5. Transición entre páginas: Dissolve 0,3 s
+6. Música: una pista suave sin letra (volumen bajo)
+7. Descargar → MP4
+
+=== Retoques opcionales (si algo te molesta de la foto vieja) ===
+
+En Canva, sobre la imagen:
+  - Brillo +5, Contraste +8 (más vivo)
+  - Recorte: acercar un poco el pack
+  - Borrar con "Borrador mágico" un detalle suelto (no rehacer toda la foto)
+
+NO usar IA generativa de Canva para "rehacer" el pack — solo ajustes.
+
+=== Para Facebook ===
+
+Caption + link:
+  https://wa.me/56975647756?text=Quiero%20pack%20Día%20del%20Padre
+
+Guarda tus versiones editadas aquí como:
+  01-completo-FB.png (etc.)
+sin sobrescribir *-ORIGINAL.png
+
+Los PNG en ../pack-papa-*.png (web) no se tocan salvo que Isabel confirme.

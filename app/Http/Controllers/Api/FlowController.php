@@ -34,7 +34,10 @@ class FlowController extends Controller
             'flow',
             $checkout['fulfillment_type'],
             $checkout['delivery'],
-            $checkout['totals']
+            $checkout['totals'],
+            $checkout['coupon_code'] ?? null,
+            (int) ($checkout['coupon_discount'] ?? 0),
+            $checkout['marketing'] ?? []
         );
         $total = (int) round((float) $venta->total);
 

@@ -29,7 +29,16 @@ export type DeliveryQuote = {
   };
 };
 
+export type DeliveryRenaicoMessaging = {
+  activo?: boolean;
+  min_pedido_delivery_clp?: number;
+  min_pedido_delivery_nota?: string;
+  ventanas?: { nombre: string; horario: string; dias: string }[];
+  retiro?: { direccion?: string; horario?: string; nota?: string };
+};
+
 export type DeliveryConfig = {
+  success?: boolean;
   store: { name: string; address: string; lat: number; lng: number };
   pricing: {
     base_commune_clp: number;
@@ -38,16 +47,28 @@ export type DeliveryConfig = {
     max_radius_km: number;
     hint: string;
   };
+  renaico?: DeliveryRenaicoMessaging;
 };
 
 export type FulfillmentType = 'pickup' | 'delivery';
 
 export type CheckoutOptionsResponse = {
   success: boolean;
-  pickup: { address: string; hours: string; whatsapp: string };
+  pickup: {
+    address: string;
+    hours: string;
+    whatsapp: string;
+    label?: string | null;
+    hint?: string | null;
+  };
   thresholds: { free_reinforced_from: number; free_gift_box_from: number };
+  min_order_products?: number;
+  amount_to_free_gift_box?: number;
   packaging_options: PackagingOption[];
+  packaging_default?: string;
   delivery_enabled?: boolean;
+  fulfillment_mode?: string;
+  fecha_retiro_label?: string | null;
 };
 
 export type VentaPickupPublic = {

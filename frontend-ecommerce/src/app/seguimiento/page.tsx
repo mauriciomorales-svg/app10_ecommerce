@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Loader2, Package, MapPin, Copy, ExternalLink } from 'lucide-react';
 import type { VentaPickupPublic } from '../lib/checkout';
 import { DeliveryOrderTimeline } from '../components/DeliveryOrderTimeline';
+import StorePageHeader from '../components/StorePageHeader';
 import { apiFetch } from '../lib/api';
 
 function SeguimientoContent() {
@@ -58,12 +59,12 @@ function SeguimientoContent() {
 
   return (
     <div className="max-w-lg w-full">
-      <h1 className="text-2xl font-bold text-[#16a34a] mb-1">Seguimiento de pedido</h1>
+      <h1 className="font-display text-2xl font-bold text-brand-ink mb-1">Seguimiento de pedido</h1>
       <p className="text-gray-600 text-sm mb-6">Actualización automática cada 30 segundos</p>
 
       {loading && (
         <div className="flex flex-col items-center py-12 text-gray-600">
-          <Loader2 className="h-10 w-10 animate-spin text-[#16a34a] mb-3" />
+          <Loader2 className="h-10 w-10 animate-spin text-brand-primary mb-3" />
           Cargando pedido…
         </div>
       )}
@@ -75,10 +76,10 @@ function SeguimientoContent() {
       {!loading && venta && (
         <>
           <div className="flex items-center gap-2 text-sm text-gray-700 mb-4">
-            <Package className="h-4 w-4 text-[#16a34a]" />
+            <Package className="h-4 w-4 text-brand-primary" />
             Pedido <strong>#{venta.idventa}</strong>
             {venta.codigo_retiro && (
-              <span className="ml-auto font-mono text-[#16a34a] font-bold">{venta.codigo_retiro}</span>
+              <span className="ml-auto font-mono text-brand-primary font-bold">{venta.codigo_retiro}</span>
             )}
           </div>
 
@@ -95,7 +96,7 @@ function SeguimientoContent() {
 
           <div className="bg-white border border-emerald-100 rounded-2xl p-4 mb-4 text-sm space-y-2">
             <div className="flex items-start gap-2 text-gray-700">
-              <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-[#16a34a]" />
+              <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-brand-primary" />
               <div>
                 <p>{venta.pickup_address}</p>
                 {isDelivery && venta.delivery_address && (
@@ -111,7 +112,7 @@ function SeguimientoContent() {
               <button
                 type="button"
                 onClick={copyCode}
-                className="inline-flex items-center gap-1 text-[#16a34a] font-medium"
+                className="inline-flex items-center gap-1 text-brand-primary font-medium"
               >
                 <Copy className="h-3.5 w-3.5" /> Copiar código
               </button>
@@ -121,7 +122,7 @@ function SeguimientoContent() {
           <div className="flex flex-col gap-2">
             <Link
               href="/"
-              className="inline-flex justify-center py-3 rounded-xl bg-[#16a34a] text-white font-medium"
+              className="inline-flex justify-center py-3 rounded-xl bg-brand-primary text-white font-medium"
             >
               Volver a la tienda
             </Link>
@@ -144,17 +145,22 @@ function SeguimientoContent() {
 
 export default function SeguimientoPage() {
   return (
-    <div className="min-h-screen bg-[#f0fdf4] flex items-start justify-center p-4 pt-10">
-      <div className="bg-white rounded-2xl shadow-lg border border-emerald-100 p-6 md:p-8 w-full">
+    <div className="min-h-screen bg-brand-surface">
+      <Suspense fallback={null}>
+        <StorePageHeader backHref="/" backLabel="Tienda" title="Seguimiento" />
+      </Suspense>
+      <div className="flex items-start justify-center p-4 py-8">
+      <div className="bg-white rounded-2xl shadow-card border border-slate-100 p-6 md:p-8 w-full max-w-lg">
         <Suspense
           fallback={
             <div className="flex justify-center py-16">
-              <Loader2 className="h-10 w-10 animate-spin text-[#16a34a]" />
+              <Loader2 className="h-10 w-10 animate-spin text-brand-primary" />
             </div>
           }
         >
           <SeguimientoContent />
         </Suspense>
+      </div>
       </div>
     </div>
   );

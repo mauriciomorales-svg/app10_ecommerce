@@ -48,34 +48,47 @@ class InventoryService
                 continue;
             }
 
-            if ($producto->es_pack && $bundleConfig && ! empty($bundleConfig['modifiers'])) {
-                // Pack con bundle dinámico: descontar stock de cada child seleccionado
+            if (is_array($bundleConfig) && ! empty($bundleConfig['modifiers'])) {
                 foreach ($bundleConfig['modifiers'] as $modifier) {
-                    $childId = $modifier['child_product_id'] ?? null;
-                    if (!$childId) continue;
-
-                    $child = Producto::find($childId);
-                    if (!$child) {
-                        Log::warning("InventoryService: Child #{$childId} no encontrado");
+                    if (! is_array($modifier)) {
+                        continue;
+                    }
+                    $childId = (int) ($modifier['child_product_id'] ?? 0);
+                    if ($childId <= 0) {
                         continue;
                     }
 
-                    // Buscar quantity_deduction de la opción del bundle
+                    $child = Producto::find($childId);
+                    if (! $child) {
+                        Log::warning("InventoryService: Child #{$childId} no encontrado");
+
+                        continue;
+                    }
+
                     $option = ProductBundleOption::where('parent_product_id', $producto->idproducto)
                         ->where('child_product_id', $childId)
                         ->first();
-                    $qty = ($option ? $option->quantity_deduction : 1) * $cantidad;
+                    $qtyDeduction = ($option ? $option->quantity_deduction : 1) * $cantidad;
 
-                    if ($child->stock_actual >= $qty) {
-                        $child->decrement('stock_actual', $qty);
+                    if ($child->stock_actual >= $qtyDeduction) {
+                        $child->decrement('stock_actual', $qtyDeduction);
                         $deducted[] = [
                             'producto' => $child->nombre,
-                            'cantidad' => $qty,
+                            'cantidad' => $qtyDeduction,
                             'tipo' => 'bundle_child',
                         ];
                     } else {
-                        Log::warning("InventoryService: Stock insuficiente {$child->nombre} (tiene {$child->stock_actual}, necesita {$qty})");
+                        Log::warning("InventoryService: Stock insuficiente {$child->nombre} (tiene {$child->stock_actual}, necesita {$qtyDeduction})");
                     }
+                }
+
+                if (! $producto->es_pack && $producto->stock_actual >= $cantidad) {
+                    $producto->decrement('stock_actual', $cantidad);
+                    $deducted[] = [
+                        'producto' => $producto->nombre,
+                        'cantidad' => $cantidad,
+                        'tipo' => 'bundle_parent',
+                    ];
                 }
             } elseif ($producto->es_pack && $producto->componentes->isNotEmpty()) {
                 // Pack con componentes base (producto_composicion)

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b45309"/>
+      <stop offset="100%" stop-color="#78350f"/>
+    </linearGradient>
+    <linearGradient id="cup" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fffbeb"/>
+      <stop offset="100%" stop-color="#fde68a"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="480" fill="url(#bg)"/>
+  <ellipse cx="240" cy="390" rx="130" ry="18" fill="#000" opacity="0.22"/>
+  <path d="M155 150h170l-16 205c-4 26-26 44-69 44s-65-18-69-44L155 150z" fill="url(#cup)" stroke="#d97706" stroke-width="3"/>
+  <ellipse cx="240" cy="150" rx="85" ry="20" fill="#fffbeb" stroke="#f59e0b" stroke-width="3"/>
+  <circle cx="215" cy="210" r="14" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+  <circle cx="255" cy="205" r="12" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+  <ellipse cx="238" cy="232" rx="20" ry="10" fill="#fcd34d"/>
+  <path d="M188 248c28 14 96 14 124 0" stroke="#92400e" stroke-width="8" stroke-linecap="round"/>
+  <text x="240" y="88" text-anchor="middle" fill="#fde68a" font-family="system-ui,sans-serif" font-size="12" font-weight="700" letter-spacing="2">GALLETA LOVERS</text>
+</svg>

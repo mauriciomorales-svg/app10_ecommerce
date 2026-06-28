@@ -4,7 +4,7 @@ return [
     'store_name' => env('PACKAGING_STORE_NAME', 'Donde Morales'),
     'pickup_address' => env('PACKAGING_PICKUP_ADDRESS', 'Santiago Watt 205, Renaico, Araucanía'),
     'pickup_hours' => env('PACKAGING_PICKUP_HOURS', 'Lun–Dom 9:00–21:00'),
-    'whatsapp' => env('PACKAGING_WHATSAPP', '+56976647756'),
+    'whatsapp' => env('PACKAGING_WHATSAPP', '+56975647756'),
 
     /** Subtotal productos (CLP) desde el cual la bolsa reforzada pasa a $0 */
     'free_reinforced_from' => (int) env('PACKAGING_FREE_REINFORCED_FROM', 10000),

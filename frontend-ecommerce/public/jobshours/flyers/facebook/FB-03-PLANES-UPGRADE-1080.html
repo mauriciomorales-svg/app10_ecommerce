@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>JobsHours · FB 3/4</title>
+  <link rel="stylesheet" href="fb-base.css" />
+  <style>
+    .slide-3 {
+      background: linear-gradient(180deg, var(--jh-navy) 0%, var(--jh-ink) 100%);
+    }
+    .body { padding: 20px 48px 100px; height: 100%; display: flex; flex-direction: column; }
+    .intro { margin-top: 20px; }
+    .intro h2 { font-size: 44px; font-weight: 900; line-height: 1.1; }
+    .intro p { margin-top: 12px; font-size: 20px; font-weight: 600; opacity: .9; line-height: 1.4; }
+    .cards { margin-top: 24px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+    .pack {
+      margin-top: 14px;
+      background: var(--jh-o);
+      border-radius: var(--r);
+      padding: 18px 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-weight: 800; font-size: 18px;
+    }
+    .pack strong { font-size: 28px; }
+  </style>
+</head>
+<body>
+  <article class="slide slide-3">
+    <div class="body">
+      <header class="topbar" style="padding:0">
+        <div class="brand">
+          <div class="logo">JH</div>
+          <div>
+            <strong>JobsHours</strong>
+            <span>Cuando ya funciona el Plan 1</span>
+          </div>
+        </div>
+        <span class="swipe-hint">Desliza →</span>
+      </header>
+
+      <div class="intro">
+        <p class="tagline-sm" style="color:var(--jh-g-mint)">Después del Plan 1</p>
+        <h2>Subí de plan sin prometer de más</h2>
+        <p>Primero que funcione el mostrador. Bot WhatsApp y tienda web solo cuando tu operación ya está ordenada.</p>
+      </div>
+
+      <div class="cards">
+        <div class="plan-card on">
+          <div>
+            <h3>Menos WhatsApp</h3>
+            <p>Respuestas automáticas en hora punta. Se activa cuando tu operación ya está ordenada.</p>
+          </div>
+          <div>
+            <div class="p">$44.990</div>
+            <div class="per">/mes + IVA</div>
+          </div>
+        </div>
+        <div class="plan-card">
+          <div>
+            <h3>También en web</h3>
+            <p>Mismo inventario en local y tienda online. Piloto — cotización clara.</p>
+          </div>
+          <div>
+            <div class="p">$59.990</div>
+            <div class="per">/mes + IVA</div>
+          </div>
+        </div>
+        <div class="plan-card">
+          <div>
+            <h3>Minimarket · caja</h3>
+            <p>Góndola, lector, inventario. Ruta distinta en la web.</p>
+          </div>
+          <div>
+            <div class="p">$19.990</div>
+            <div class="per">/mes + IVA</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pack">
+        <span>¿Sin tablet? Pack Express · hardware + instalación + mes 1</span>
+        <strong>$199.990</strong>
+      </div>
+    </div>
+
+    <footer class="progress">
+      <div class="dots"><i></i><i></i><i class="on"></i><i></i></div>
+      <span class="num">3 / 4</span>
+    </footer>
+  </article>
+</body>
+</html>

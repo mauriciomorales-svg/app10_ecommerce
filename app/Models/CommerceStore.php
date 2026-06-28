@@ -57,6 +57,14 @@ class CommerceStore extends Model
 
     public static function resolveFromRequest(Request $request): self
     {
+        $slug = strtolower(trim((string) $request->header('X-Commerce-Store-Slug', '')));
+        if ($slug !== '') {
+            $bySlug = static::query()->where('slug', $slug)->where('active', true)->first();
+            if ($bySlug) {
+                return $bySlug;
+            }
+        }
+
         return self::resolveForHost($request->getHost());
     }
 }

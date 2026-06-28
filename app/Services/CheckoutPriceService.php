@@ -35,23 +35,26 @@ class CheckoutPriceService
 
             /** @var Producto|null $producto */
             $producto = Producto::query()->find($id);
-            if (! $producto || ! $producto->activo) {
+            if (! $producto || ! $producto->activo || ! ($producto->venta_web ?? true)) {
                 throw ValidationException::withMessages([
                     "items.{$index}.idproducto" => "El producto #{$id} no está disponible.",
                 ]);
             }
 
             $qty = max(1, (int) ($raw['cantidad'] ?? 1));
-            self::assertStockAvailable($producto, $qty, $bundle, $index);
+            $normalizedBundle = is_array($bundle) ? $bundle : null;
 
-            $unitPrice = self::lineUnitPrice($producto, is_array($bundle) ? $bundle : null);
+            BundleConfigurationService::validateForProduct($producto, $normalizedBundle);
+            self::assertStockAvailable($producto, $qty, $normalizedBundle, $index);
+
+            $unitPrice = self::lineUnitPrice($producto, $normalizedBundle);
 
             $resolved[] = [
                 'idproducto' => $producto->idproducto,
                 'nombre' => $producto->nombre,
                 'cantidad' => $qty,
                 'precio_venta' => $unitPrice,
-                'bundle_configuration' => is_array($bundle) ? $bundle : null,
+                'bundle_configuration' => $normalizedBundle,
             ];
         }
 
@@ -111,15 +114,17 @@ class CheckoutPriceService
                 continue;
             }
             $sProduct = Producto::query()->find($sid);
-            if ($sProduct && $sProduct->activo) {
+            if ($sProduct && $sProduct->activo && ($sProduct->venta_web ?? true)) {
                 $price += (int) round((float) $sProduct->precio);
             }
         }
 
+        $price += BundleConfigurationService::customizationExtraCost($producto, $bundle);
+
         return max(0, $price);
     }
 
-  /**
+    /**
      * @param  array<string, mixed>|null  $bundle
      */
     private static function assertStockAvailable(
@@ -128,7 +133,7 @@ class CheckoutPriceService
         ?array $bundle,
         int $index
     ): void {
-        if ($producto->es_pack && is_array($bundle) && ! empty($bundle['modifiers'])) {
+        if (is_array($bundle) && ! empty($bundle['modifiers'])) {
             foreach ($bundle['modifiers'] as $mod) {
                 if (! is_array($mod)) {
                     continue;
@@ -153,6 +158,18 @@ class CheckoutPriceService
                 }
             }
 
+            if ($producto->es_pack) {
+                return;
+            }
+
+            if (! $producto->es_pack && (int) $producto->stock_actual < $qty) {
+                throw ValidationException::withMessages([
+                    "items.{$index}" => "Stock insuficiente para «{$producto->nombre}».",
+                ]);
+            }
+
+            self::assertSuggestionStock($bundle, $qty, $index);
+
             return;
         }
 
@@ -167,6 +184,8 @@ class CheckoutPriceService
                 }
             }
 
+            self::assertSuggestionStock($bundle, $qty, $index);
+
             return;
         }
 
@@ -174,6 +193,35 @@ class CheckoutPriceService
             throw ValidationException::withMessages([
                 "items.{$index}" => "Stock insuficiente para «{$producto->nombre}».",
             ]);
+        }
+
+        self::assertSuggestionStock($bundle, $qty, $index);
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $bundle
+     */
+    private static function assertSuggestionStock(?array $bundle, int $qty, int $index): void
+    {
+        if (! is_array($bundle) || empty($bundle['suggestions'])) {
+            return;
+        }
+
+        foreach ($bundle['suggestions'] as $suggestion) {
+            if (! is_array($suggestion)) {
+                continue;
+            }
+            $sid = (int) ($suggestion['idproducto'] ?? 0);
+            if ($sid <= 0) {
+                continue;
+            }
+            $sProduct = Producto::query()->find($sid);
+            if (! $sProduct || (int) $sProduct->stock_actual < $qty) {
+                $name = $sProduct?->nombre ?? 'producto sugerido';
+                throw ValidationException::withMessages([
+                    "items.{$index}" => "Stock insuficiente para «{$name}».",
+                ]);
+            }
         }
     }
 }

@@ -1,135 +1,155 @@
-import { MapPin, ShoppingCart, MessageCircle, Facebook, Instagram, Video, ExternalLink, ChevronRight } from 'lucide-react';
+import {
+  MapPin,
+  ShoppingCart,
+  MessageCircle,
+  Facebook,
+  Instagram,
+  Video,
+  ExternalLink,
+  ChevronRight,
+} from 'lucide-react';
+import Logo from '../components/Logo';
+
+const WHATSAPP = 'https://wa.me/56975647756';
 
 const links = [
   {
     title: 'Tienda Online',
-    subtitle: 'Pide directo en la Web',
-    url: 'https://www.dondemorales.cl/',
+    subtitle: 'Pide directo en la web',
+    url: 'https://www.dondemorales.cl/?utm_source=facebook&utm_medium=bio&utm_campaign=tienda',
     icon: ShoppingCart,
-    color: 'bg-orange-600',
-    hoverColor: 'group-hover:text-orange-600',
-    ring: 'ring-1 ring-orange-100',
-    hasBlob: true,
+    featured: true,
   },
   {
     title: 'WhatsApp',
     subtitle: 'Atención al cliente',
-    url: 'https://wa.me/56975647756',
+    url: WHATSAPP,
     icon: MessageCircle,
     color: 'bg-[#25D366]',
-    hoverColor: 'group-hover:text-[#25D366]',
   },
   {
     title: 'Facebook del Día',
-    subtitle: 'Ofertas y Noticias',
+    subtitle: 'Ofertas y noticias',
     url: 'https://www.facebook.com/profile.php?id=61587659169721',
     icon: Facebook,
     color: 'bg-[#1877F2]',
-    hoverColor: 'group-hover:text-[#1877F2]',
   },
   {
     title: 'Instagram',
-    subtitle: 'Fotos y Antojos',
+    subtitle: 'Fotos y antojos',
     url: 'https://www.instagram.com/restaurantdondemorales/',
     icon: Instagram,
-    color: 'bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600',
-    hoverColor: 'group-hover:text-pink-500',
+    color: 'bg-gradient-to-tr from-amber-400 via-red-500 to-purple-600',
   },
   {
     title: 'TikTok',
-    subtitle: 'Videos Divertidos',
+    subtitle: 'Videos del local',
     url: 'https://www.tiktok.com/@dondemorales',
     iconText: '♪',
-    color: 'bg-black',
-    hoverColor: 'group-hover:text-black',
+    color: 'bg-brand-ink',
   },
   {
     title: 'Facebook Live',
-    subtitle: 'Transmisiones en Vivo',
+    subtitle: 'Transmisiones en vivo',
     url: 'https://www.facebook.com/donde.morales.7',
     icon: Video,
     color: 'bg-red-600',
-    hoverColor: 'group-hover:text-red-600',
-    ring: 'ring-1 ring-red-50',
   },
 ];
 
 export default function BioPage() {
   return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center px-4 py-6 sm:p-6 font-sans">
-      <div className="w-full max-w-sm sm:max-w-md md:max-w-lg space-y-4">
-
-        {/* Header */}
-        <div className="text-center mb-4">
-          <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 leading-tight">Donde Morales</h1>
-          <p className="text-slate-500 text-base">Renaico</p>
+    <div className="min-h-screen bg-brand-surface flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-md space-y-4">
+        <div className="text-center mb-6">
+          <div className="flex justify-center mb-4">
+            <Logo />
+          </div>
+          <p className="text-brand-muted text-sm font-medium">Renaico · Araucanía, Chile</p>
+          <p className="text-xs text-slate-400 mt-1">Lun–Dom 9:00 – 21:00</p>
         </div>
 
-        {/* Mapa / Ubicación */}
-        <div className="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 group hover:shadow-md transition-all">
+        <div className="bg-white p-4 rounded-2xl shadow-card border border-slate-100">
           <div className="flex items-center justify-between mb-2 px-1">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Ubicación</span>
-            <span className="text-xs text-slate-500">
-              <MapPin className="inline h-3 w-3 text-red-500 mr-1" /> Santiago Watt 205
+            <span className="text-xs font-bold text-brand-muted uppercase tracking-wider">Ubicación</span>
+            <span className="text-xs text-brand-ink flex items-center gap-1">
+              <MapPin className="h-3 w-3 text-red-500" />
+              Watt 205
             </span>
           </div>
-
-          <div className="rounded-xl overflow-hidden h-40 w-full relative bg-slate-200 border border-slate-100">
+          <div className="rounded-xl overflow-hidden h-40 w-full bg-slate-100 border border-slate-100">
             <iframe
+              title="Mapa DondeMorales"
               width="100%"
               height="100%"
-              frameBorder="0"
               style={{ border: 0 }}
               src="https://maps.google.com/maps?q=Santiago+Watt+205,+Renaico&t=&z=15&ie=UTF8&iwloc=&output=embed"
               allowFullScreen
             />
           </div>
-
           <a
             href="https://www.google.com/maps/search/?api=1&query=Santiago+Watt+205,+Renaico"
             target="_blank"
-            className="mt-3 flex items-center justify-center w-full py-2 bg-blue-50 text-blue-600 rounded-lg font-bold text-sm hover:bg-blue-600 hover:text-white transition-colors"
+            rel="noopener noreferrer"
+            className="mt-3 flex items-center justify-center w-full py-2.5 bg-brand-primary/10 text-brand-primary rounded-xl font-bold text-sm hover:bg-brand-primary hover:text-white transition-colors"
           >
-            <MapPin className="h-4 w-4 mr-2" /> Cómo llegar (GPS)
+            <MapPin className="h-4 w-4 mr-2" />
+            Cómo llegar (GPS)
           </a>
         </div>
 
-        {/* Links */}
         {links.map((link) => (
           <a
             key={link.title}
             href={link.url}
             target="_blank"
-            className={`group flex items-center w-full p-4 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border border-slate-100 relative overflow-hidden ${link.ring || ''}`}
+            rel="noopener noreferrer"
+            className={`group flex items-center w-full p-4 rounded-2xl shadow-card border transition-all duration-300 hover:-translate-y-0.5 hover:shadow-card-hover ${
+              link.featured
+                ? 'bg-brand-primary text-white border-brand-primary'
+                : 'bg-white border-slate-100'
+            }`}
           >
-            {link.hasBlob && (
-              <div className="absolute top-0 right-0 w-16 h-16 bg-orange-100 rounded-bl-full -mr-8 -mt-8 opacity-50 transition-transform group-hover:scale-150" />
-            )}
-
-            <div className={`w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-xl ${link.color} text-white text-2xl shadow-sm group-hover:scale-110 transition-transform z-10`}>
-              {link.icon ? <link.icon className="h-6 w-6" /> : <span className="text-xl font-bold">{link.iconText}</span>}
+            <div
+              className={`w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-xl text-white text-2xl shadow-sm ${
+                link.featured ? 'bg-brand-accent text-brand-ink' : link.color || 'bg-brand-primary'
+              }`}
+            >
+              {link.icon ? (
+                <link.icon className="h-6 w-6" />
+              ) : (
+                <span className="text-xl font-bold">{link.iconText}</span>
+              )}
             </div>
-            <div className="ml-4 flex-grow z-10">
-              <h3 className="font-bold text-slate-800 text-lg">{link.title}</h3>
-              <p className={`text-xs ${link.title === 'Tienda Online' ? 'font-medium text-orange-600' : 'text-slate-500'}`}>
+            <div className="ml-4 flex-grow min-w-0">
+              <h3
+                className={`font-display font-bold text-lg truncate ${
+                  link.featured ? 'text-white' : 'text-brand-ink'
+                }`}
+              >
+                {link.title}
+              </h3>
+              <p
+                className={`text-xs truncate ${
+                  link.featured ? 'text-emerald-100' : 'text-brand-muted'
+                }`}
+              >
                 {link.subtitle}
               </p>
             </div>
-            <div className="z-10">
-              {link.title === 'Tienda Online' ? (
-                <ExternalLink className={`h-4 w-4 text-slate-300 ${link.hoverColor}`} />
+            <div className="shrink-0 ml-2">
+              {link.featured ? (
+                <ExternalLink className="h-4 w-4 text-emerald-200" />
               ) : (
-                <ChevronRight className={`h-4 w-4 text-slate-300 ${link.hoverColor}`} />
+                <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-brand-primary" />
               )}
             </div>
           </a>
         ))}
 
-        {/* Footer */}
-        <div className="text-center pt-6 text-slate-400 text-xs pb-4">
-          <p>&copy; {new Date().getFullYear()} Donde Morales</p>
-        </div>
-
+        <p className="text-center pt-4 text-slate-400 text-xs">
+          © {new Date().getFullYear()} DondeMorales
+        </p>
       </div>
     </div>
   );

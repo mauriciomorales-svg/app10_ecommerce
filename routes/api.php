@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\CommerceStoreController;
+use App\Http\Controllers\Api\HomeExperienceController;
 use App\Http\Controllers\Api\ProductoController;
 use App\Http\Controllers\Api\VentaController;
 use App\Http\Controllers\Api\FlowController;
@@ -9,10 +11,16 @@ use Illuminate\Http\Request;
 
 Route::get('/user', fn (Request $request) => $request->user())->middleware('auth:sanctum');
 
+Route::get('/commerce/store', [CommerceStoreController::class, 'current']);
+Route::get('/commerce/marketing', [\App\Http\Controllers\Api\MarketingConfigController::class, 'show']);
+
 // Productos - usando tabla productos existente
 Route::get('/productos', [ProductoController::class, 'index']);
+Route::get('/productos/suggest', [ProductoController::class, 'suggest']);
 Route::get('/productos/destacados', [ProductoController::class, 'destacados']);
 Route::get('/productos/categorias', [ProductoController::class, 'categorias']);
+Route::get('/tienda/experiencias-home', [HomeExperienceController::class, 'index']);
+Route::get('/tienda/helados/toppis-del-dia', [\App\Http\Controllers\Api\HeladosToppisDelDiaController::class, 'show']);
 Route::get('/productos/{id}', [ProductoController::class, 'show']);
 Route::get('/productos/{id}/imagen', [ProductoController::class, 'imagen']);
 
@@ -58,6 +66,18 @@ Route::post('/pagos/mp-online/webhook', [MercadoPagoOnlineController::class, 'we
 
 // Checkout: empaque, retiro, envío
 Route::get('/checkout/options', [\App\Http\Controllers\Api\CheckoutOptionsController::class, 'index']);
+Route::middleware('throttle:30,1')->group(function () {
+    Route::post('/checkout/cart-suggestions', [\App\Http\Controllers\Api\CartSuggestionController::class, 'index']);
+    Route::post('/commerce/events', [\App\Http\Controllers\Api\CommerceEventController::class, 'store']);
+});
+
+Route::middleware('throttle:60,1')->group(function () {
+    Route::get('/commerce/visits/stats', [\App\Http\Controllers\Api\CommerceVisitStatsController::class, 'index']);
+});
+
+Route::middleware('throttle:15,1')->group(function () {
+    Route::post('/checkout/coupon/validate', [\App\Http\Controllers\Api\CouponController::class, 'validate']);
+});
 Route::get('/checkout/delivery-config', [\App\Http\Controllers\Api\DeliveryCheckoutController::class, 'config']);
 Route::get('/checkout/delivery-quote', [\App\Http\Controllers\Api\DeliveryCheckoutController::class, 'quote']);
 Route::middleware('throttle:20,1')->group(function () {
